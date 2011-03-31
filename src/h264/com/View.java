@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,6 +26,11 @@ import android.util.Log;
 import android.view.View;
 
 class VView extends View implements Runnable{
+	
+	// the rtp buffer
+	RTPPacket[] mRtpBuffer;
+	int mRtpBufferLen;
+	int mBufferUsedPos;
     
     Bitmap  mBitQQ  = null;   
     
@@ -210,12 +216,24 @@ class VView extends View implements Runnable{
 //        }
 //        UninitDecoder();
     	
+    	AllocRtpBuffer();
+    	
     	InitDecoder(width, height);
     	CTCPServerThread serverThrd = new CTCPServerThread();
     	serverThrd.start();
     	
     	
     }  
+    
+    private void AllocRtpBuffer() {
+    	
+    	mRtpBufferLen = ClientConfig.CONFIG_RTP_BUFFER_SIZE / ClientConfig.CONFIG_RTP_PACKET_SIZE;
+    	
+    	mRtpBuffer = new RTPPacket[mRtpBufferLen];
+    	
+    	mBufferUsedPos = 0;
+    	
+    }
     
     class CTCPServerThread extends Thread {
     	// 套接字服务接口
@@ -377,6 +395,51 @@ class VView extends View implements Runnable{
     	
     	private DatagramSocket mClientDatagram = null;
     	
+    	private int toInt(byte b1, byte b2, byte b3, byte b4) {
+    		
+    		return (int)b1*(1<<24) + (int)b2*65536 + (int)b3*256 + (int)b4;
+ 
+    	}
+    	
+    	private int toInt(byte b1, byte b2) {
+    		
+    		return (int)b1*256 + (int)b2*b2;
+    	}
+    	
+    	private void fillRtpPacket(int pos, byte[] rtpPacket, int rtpPacketLen)	{
+    		
+    		mRtpBuffer[pos].mTimestamp = toInt(rtpPacket[4], rtpPacket[5], rtpPacket[6], rtpPacket[7]);
+    		mRtpBuffer[pos].mSeqNo = toInt(rtpPacket[2], rtpPacket[3]);
+    		mRtpBuffer[pos].mPacketType = ((rtpPacket[12] & 0x1f)==28 ? RTPPacket.FUA : RTPPacket.SGN);
+    		
+    		
+    		if( RTPPacket.FUA == mRtpBuffer[pos].mPacketType ) {
+    			
+    			mRtpBuffer[pos].mIsFirst = (((rtpPacket[13] & 0x80)>>7)==1);
+    			mRtpBuffer[pos].mIsLast = (((rtpPacket[13] & 0x40)>>6)==1);
+    			
+    		}
+    		
+    		mRtpBuffer[pos].mF = (rtpPacket[12]&0x80)>>7;
+    		mRtpBuffer[pos].mNRI = (rtpPacket[12]&0x60)>>5;
+    		mRtpBuffer[pos].mType = (rtpPacket[12]&0x1f);
+    		
+    		mRtpBuffer[pos].mPayloadLen = rtpPacketLen - 13;
+    		if( RTPPacket.FUA == mRtpBuffer[pos].mPacketType ) {
+    			
+    			mRtpBuffer[pos].mPayloadLen--;
+    			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 14, rtpPacketLen);
+    		}
+    		else {
+    			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 13, rtpPacketLen);
+    		}
+    	}
+    	
+    	public void extractNalFromBuf() {
+    		
+    		Arrays.sort(mRtpBuffer, RTPPacket.compare)
+    	}
+    	
     	public CRTPClientThread() {
     		try {
 				mClientDatagram = new DatagramSocket();
@@ -396,6 +459,7 @@ class VView extends View implements Runnable{
 			// to recevie the rtp packet
 			byte[] rtpPacket = new byte[ClientConfig.CONFIG_RTP_PACKET_SIZE];
 			DatagramPacket rtpDatagram = new DatagramPacket(rtpPacket, rtpPacket.length);
+			int rtpPacketLen;
 			
 			while (true) {
 				
@@ -404,6 +468,18 @@ class VView extends View implements Runnable{
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				}
+				
+				rtpPacketLen = rtpDatagram.getLength();
+				rtpPacket = rtpDatagram.getData();
+				
+				fillRtpPacket(mBufferUsedPos, rtpPacket, rtpPacketLen);
+				
+				mBufferUsedPos++;
+				
+				// The RTP buffer is full
+				if(mBufferUsedPos==mRtpBufferLen) {
+					extractNalFromBuf();
 				}
 			
 				break;

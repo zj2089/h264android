@@ -9,4 +9,10 @@ public interface ClientConfig {
 	
 	// the max size of one rtp packet
 	static final int CONFIG_RTP_PACKET_SIZE = 1400;
+	
+	/*
+	 * the size of RTP buffer,
+	 * RTP buffer is used to order the RTP packets
+	 */
+	static final int CONFIG_RTP_BUFFER_SIZE = 40*1024; //40k
 }
