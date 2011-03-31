@@ -8,9 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 
 import android.content.Context;
@@ -41,12 +44,6 @@ class VView extends View implements Runnable{
 	int mTrans=0x0F0F0F0F;
 	
 	//String PathFileName; 
-	
-	// 自定义的一些常量
-	static final String SERVER_HOST = "localhost";
-	static final int CONFIG_SERVER_PORT = 2000;
-	static final int CONFIG_BUFFER_SIZE = 40*1024; // 40K
-	
 	
     public native int InitDecoder(int width, int height);
     public native int UninitDecoder(); 
@@ -229,7 +226,7 @@ class VView extends View implements Runnable{
     		// 初始化服务套接字
     		try {
     			//创建套接字服务示例
-    			mServerSocket = new ServerSocket(CONFIG_SERVER_PORT);
+    			mServerSocket = new ServerSocket(ClientConfig.CONFIG_SERVER_PORT);
     		}
     		catch(IOException e) {
     			e.printStackTrace();
@@ -324,7 +321,7 @@ class VView extends View implements Runnable{
     			// 获取客户端请求
     			try {
     				
-    				byte buf[] = new byte[CONFIG_BUFFER_SIZE];
+    				byte buf[] = new byte[ClientConfig.CONFIG_BUFFER_SIZE];
     				byte btNalLen[] = new byte[2]; 
     				
     				
@@ -376,5 +373,43 @@ class VView extends View implements Runnable{
     	}
     }
     
-    
+    class CRTPClientThread extends Thread {
+    	
+    	private DatagramSocket mClientDatagram = null;
+    	
+    	public CRTPClientThread() {
+    		try {
+				mClientDatagram = new DatagramSocket();
+			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+			// to recevie the rtp packet
+			byte[] rtpPacket = new byte[ClientConfig.CONFIG_RTP_PACKET_SIZE];
+			DatagramPacket rtpDatagram = new DatagramPacket(rtpPacket, rtpPacket.length);
+			
+			while (true) {
+				
+				try {
+					mClientDatagram.receive(rtpDatagram);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+				break;
+			}
+			
+			super.run();
+		}
+    }
 }
