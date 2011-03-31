@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, H264Android!</string>
+    <string name="app_name">H264Android</string>
+    
+    <string name="play">播放</string>   
+    <string name="exit">退出</string>
+</resources>
