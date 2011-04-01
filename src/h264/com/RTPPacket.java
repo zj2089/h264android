@@ -2,7 +2,7 @@ package h264.com;
 
 import java.util.Comparator;
 
-class RTPPacket implements Comparator {
+class RTPPacket implements Comparator<RTPPacket> {
 	
 	/*
 	 *  the type of NAL in the current RTP packet 
@@ -33,20 +33,18 @@ class RTPPacket implements Comparator {
 	public int mPayloadLen;
 	public byte[] mPayload = new byte[ClientConfig.CONFIG_RTP_PACKET_SIZE];
 	
-	int compare(RTPPacket p1, RTPPacket p2) {
+	@Override
+	public int compare(RTPPacket p1, RTPPacket p2) {
+
 		return p1.mSeqNo - p2.mSeqNo;
-	}
-	
-	boolean equals(RTPPacket p) {
-		return this.mSeqNo == p.mSeqNo;
+		
 	}
 
 	@Override
-	public int compare(Object object1, Object object2) {
-		// TODO Auto-generated method stub
-		RTPPacket p1 = (RTPPacket) object1;
-		RTPPacket p2 = (RTPPacket) object2;
-		return p1.mSeqNo - p2.mSeqNo;
+	public boolean equals(Object o) {
+		
+		RTPPacket p = (RTPPacket)o;
+		return this.mSeqNo == p.mSeqNo;
 	}
 	
 }
