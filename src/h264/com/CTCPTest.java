@@ -10,10 +10,13 @@ import android.util.Log;
 
 class CTCPServerThread extends Thread {
 	
-	VView mView;
+	private VView mView;
 	
 	// 套接字服务接口
 	private ServerSocket mServerSocket = null;
+	
+	// The number of received packets
+	public int mRecvPacketNum = 0;
 
 	public CTCPServerThread(VView view) {
 
@@ -79,98 +82,78 @@ class CTCPServerThread extends Thread {
 			}
 		}
 	}
-}
-
-class CTCPSessionThread extends Thread {
 	
-	VView mView;
-	// 与客户端通信套接字
-	private boolean mIsFinish = false;
-	private InputStream inputstream;
-	FileInputStream fis = null; 
-
-	public CTCPSessionThread(VView view, Socket socket) {
-
-		// 获取会话用输入/输出流
-		try {
-			inputstream = socket.getInputStream();
-			//fis = new FileInputStream("/sdcard/640x480.yuv");
-		}
-		catch(IOException e) {
-			
-			e.printStackTrace();
-		}
+	class CTCPSessionThread extends Thread {
 		
-		mView = view;
-	}
+		VView mView;
+		
+		// 与客户端通信套接字
+		private boolean mIsFinish = false;
+		private InputStream inputstream;
+		FileInputStream fis = null; 
 
-	//		private byte[] InputStreamToByte(InputStream is) throws IOException {
-	//			ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-	//			int ch;
-	//			while ((ch = is.read()) != -1) {
-	//				bytestream.write(ch);
-	//			}
-	//			byte imgdata[] = bytestream.toByteArray();
-	//			bytestream.close();
-	//			return imgdata;
-	//		}
+		public CTCPSessionThread(VView view, Socket socket) {
 
-	@Override
-	public void run() {
-		while(!mIsFinish) {
-
-			// 获取客户端请求
+			// 获取会话用输入/输出流
 			try {
-
-				byte buf[] = new byte[ClientConfig.CONFIG_BUFFER_SIZE];
-				byte btNalLen[] = new byte[2]; 
-
-
-				inputstream.read(btNalLen, 0, 2);
-
-				int highBit = ((int)btNalLen[0]>=0)?((int)btNalLen[0]):(256+(int)btNalLen[0]);
-				int lowBit = ((int)btNalLen[1]>=0)?((int)btNalLen[1]):(256+(int)btNalLen[1]);
-
-				int nalLen = highBit*256+lowBit;
-
-				Log.d("NalLen", ""+nalLen);
-
-				int bufLen = inputstream.read(buf, 0, nalLen);
-
-
-				mView.decodeNalAndDisplay(buf, bufLen);
-				
-//				// 对获取的数据进行处理
-//
-//				int iTemp = DecoderNal(buf, bufLen, mPixel);
-//
-//				//    				InputStream is = new ByteArrayInputStream(mPixel); 
-//				//    				
-//				//    				is.read(mRealPixel, 0, mRealPixel.length);
-//
-//				if(iTemp>0)
-//					postInvalidate(); 
-//
-//				try {
-//					Thread.currentThread().sleep(300);
-//				} catch (InterruptedException e) {
-//
-//					e.printStackTrace();
-//				}
-
-				Log.d("pIC", "end process input");
-
+				inputstream = socket.getInputStream();
 			}
 			catch(IOException e) {
+				
 				e.printStackTrace();
-				Log.d("nullpoint", "inputstream is null");
+			}
+			
+			mView = view;
+		}
+
+		@Override
+		public void run() {
+			
+			while(!mIsFinish) {
+
+				// 获取客户端请求
+				try {
+					byte buf[] = new byte[ClientConfig.CONFIG_BUFFER_SIZE];
+					byte btNalLen[] = new byte[2]; 
+
+
+					inputstream.read(btNalLen, 0, 2);
+
+					int highBit = ((int)btNalLen[0]>=0)?((int)btNalLen[0]):(256+(int)btNalLen[0]);
+					int lowBit = ((int)btNalLen[1]>=0)?((int)btNalLen[1]):(256+(int)btNalLen[1]);
+
+					int nalLen = highBit*256+lowBit;
+
+					Log.d("NalLen", ""+nalLen);
+
+					int bufLen = inputstream.read(buf, 0, nalLen);
+
+					mView.decodeNalAndDisplay(buf, bufLen);
+					
+					mRecvPacketNum++;
+					
+					// received the PPS and SPS
+					if( 2 == mRecvPacketNum ) {
+						Log.d("pIC", "received the PPS and SPS");
+						break;
+					}
+
+					Log.d("pIC", "end process input");
+
+				}
+				catch(IOException e) {
+					e.printStackTrace();
+					Log.d("nullpoint", "inputstream is null");
+				}
 			}
 		}
-	}
 
 
-	// 设置该线程是否结束的标识
-	public void setIsFinish(boolean isFinish) {
-		this.mIsFinish = isFinish;
+		// 设置该线程是否结束的标识
+		public void setIsFinish(boolean isFinish) {
+			
+			this.mIsFinish = isFinish;
+		}
 	}
 }
+

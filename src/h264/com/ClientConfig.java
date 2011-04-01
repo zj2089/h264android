@@ -5,7 +5,9 @@ public interface ClientConfig {
 	
 	static final String SERVER_HOST = "localhost";
 	static final int CONFIG_SERVER_PORT = 2000;
-	static final int CONFIG_BUFFER_SIZE = 40*1024; // 40K
+	
+	// to receive PPS and SPS
+	static final int CONFIG_BUFFER_SIZE = 30; // 30 bytes
 	
 	// the max size of one rtp packet
 	static final int CONFIG_RTP_PACKET_SIZE = 1400;

@@ -1,10 +1,5 @@
 package h264.com;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import android.content.Context;
@@ -83,6 +78,21 @@ class VView extends View implements Runnable{
     	
         canvas.drawBitmap(VideoBit, 0, 0, null); 
     }
+
+	@Override
+	public void run() {
+		
+		InitDecoder(width, height);
+		
+    	CTCPServerThread serverThrd = new CTCPServerThread(this);
+    	serverThrd.start();
+    	
+    	while( 2 != serverThrd.mRecvPacketNum ) {
+    		Log.d("pIC", "receiving PPS and SPS");
+    	}
+	}
+    
+    
     
 //    int MergeBuffer(byte[] NalBuf, int NalBufUsed, byte[] SockBuf, int SockBufUsed, int SockRemain)
 //    {
@@ -107,8 +117,8 @@ class VView extends View implements Runnable{
 //    	return i;
 //    }
 //    
-    public void run()   
-    {   
+//    public void run()   
+//    {   
 //    	InputStream is = null;
 //    	FileInputStream fileIS=null;
 //    	
@@ -210,12 +220,10 @@ class VView extends View implements Runnable{
 //	    	e.printStackTrace();
 //        }
 //        UninitDecoder();
-    	   	
-    	InitDecoder(width, height);
-    	CTCPServerThread serverThrd = new CTCPServerThread(this);
-    	serverThrd.start();
-    	
-    }
-    
-
+//    	   	
+//    	InitDecoder(width, height);
+//    	CTCPServerThread serverThrd = new CTCPServerThread(this);
+//    	serverThrd.start();
+//    	
+//    }
 }

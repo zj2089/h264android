@@ -2,7 +2,6 @@ package h264.com;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -17,7 +16,7 @@ public class H264Android extends Activity {
         setContentView(vv);
     }
     
-    // Menu item Ids
+    // Menu item IDs
     public static final int PLAY_ID = Menu.FIRST;    
     public static final int EXIT_ID = Menu.FIRST + 1; 
 
