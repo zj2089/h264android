@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
-import android.util.Log;
 import android.view.View;
 
 class VView extends View implements Runnable{
@@ -86,10 +85,6 @@ class VView extends View implements Runnable{
 		
     	CTCPServerThread serverThrd = new CTCPServerThread(this);
     	serverThrd.start();
-    	
-    	while( 2 != serverThrd.mRecvPacketNum ) {
-    		Log.d("pIC", "receiving PPS and SPS");
-    	}
 	}
     
     

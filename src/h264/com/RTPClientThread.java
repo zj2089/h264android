@@ -3,9 +3,13 @@ package h264.com;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Comparator;
+
+import android.util.Log;
 
 class CRTPClientThread extends Thread {
 	
@@ -42,9 +46,23 @@ class CRTPClientThread extends Thread {
 	String tmpNalBuf;
 	
 	public CRTPClientThread(VView view) {
+		
+		// The Client doesn't need to specify the server host and port when initializing
 		try {
-			mClientDatagram = new DatagramSocket();
+			mClientDatagram = new DatagramSocket(ClientConfig.CONFIG_CLIENT_UDP_PORT);
 		} catch (SocketException e) {
+			
+			e.printStackTrace();
+		}
+		
+		// specify the server host and port
+		try {
+			mClientDatagram.connect(
+					InetAddress.getByName(ClientConfig.CONFIG_RTP_SERVER_HOST), 
+					ClientConfig.CONFIG_SERVER_UDP_PORT
+					);
+		} catch (UnknownHostException e) {
+			
 			e.printStackTrace();
 		}
 		
@@ -237,6 +255,7 @@ class CRTPClientThread extends Thread {
 
 		while (true) {
 
+			Log.d("RTP", "start RTP receiving");
 			try {
 				mClientDatagram.receive(rtpDatagram);
 			}
@@ -247,19 +266,20 @@ class CRTPClientThread extends Thread {
 
 			rtpPacketLen = rtpDatagram.getLength();
 			rtpPacket = rtpDatagram.getData();
+			
+			Log.d("RTP", "RTP packet len:"+rtpPacketLen);
 
 			fillRtpPacket(mBufferUsedPos, rtpPacket, rtpPacketLen);
 
 			mBufferUsedPos++;
+			
+			Log.d("RTP", "RTP Buf Pos:"+mBufferUsedPos);
 
 			// The RTP buffer is full
-			if(mBufferUsedPos==mRtpBufferLen) {
+			if( mBufferUsedPos == mRtpBufferLen ) {
 				extractNalFromBuf();
 			}
-
-			break;
 		}
 
-		super.run();
 	}
 }

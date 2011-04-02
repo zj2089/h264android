@@ -23,7 +23,7 @@ class CTCPServerThread extends Thread {
 		// 初始化服务套接字
 		try {
 			//创建套接字服务示例
-			mServerSocket = new ServerSocket(ClientConfig.CONFIG_SERVER_PORT);
+			mServerSocket = new ServerSocket(ClientConfig.CONFIG_SERVER_TCP_PORT);
 		}
 		catch(IOException e) {
 			
@@ -35,10 +35,12 @@ class CTCPServerThread extends Thread {
 
 	@Override
 	public void run() {
+		
 		//启动服务
 		startServer();
 
 		if(mServerSocket == null) {
+			
 			return;
 		}
 
@@ -46,6 +48,7 @@ class CTCPServerThread extends Thread {
 			mServerSocket.close();
 		}
 		catch(IOException e) {
+			
 			e.printStackTrace();
 		}
 	}
@@ -116,13 +119,12 @@ class CTCPServerThread extends Thread {
 					byte buf[] = new byte[ClientConfig.CONFIG_BUFFER_SIZE];
 					byte btNalLen[] = new byte[2]; 
 
-
 					inputstream.read(btNalLen, 0, 2);
 
 					int highBit = ((int)btNalLen[0]>=0)?((int)btNalLen[0]):(256+(int)btNalLen[0]);
 					int lowBit = ((int)btNalLen[1]>=0)?((int)btNalLen[1]):(256+(int)btNalLen[1]);
 
-					int nalLen = highBit*256+lowBit;
+					int nalLen = highBit*256 + lowBit;
 
 					Log.d("NalLen", ""+nalLen);
 
@@ -130,11 +132,22 @@ class CTCPServerThread extends Thread {
 
 					mView.decodeNalAndDisplay(buf, bufLen);
 					
-					mRecvPacketNum++;
+					if( bufLen > 0 ) {
+						mRecvPacketNum++;
+						Log.d("pIC", "TCP recv len: " + bufLen);
+					}
+						
 					
 					// received the PPS and SPS
 					if( 2 == mRecvPacketNum ) {
+						
 						Log.d("pIC", "received the PPS and SPS");
+						
+				    	Log.d("pIC", "start the RTP Thread");
+				    	
+				    	CRTPClientThread rtpClientThrd = new CRTPClientThread(mView);
+				    	rtpClientThrd.start();
+				    	
 						break;
 					}
 

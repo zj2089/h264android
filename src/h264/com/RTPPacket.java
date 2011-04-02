@@ -28,7 +28,7 @@ class RTPPacket implements Comparator<RTPPacket> {
 	public int mType;
 	
 	/*
-	 * NAL payload
+	 * NAL pay load
 	 */
 	public int mPayloadLen;
 	public byte[] mPayload = new byte[ClientConfig.CONFIG_RTP_PACKET_SIZE];
@@ -36,7 +36,7 @@ class RTPPacket implements Comparator<RTPPacket> {
 	@Override
 	public int compare(RTPPacket p1, RTPPacket p2) {
 
-		return p1.mSeqNo - p2.mSeqNo;
+		return p1.mSeqNo - p2.mSeqNo;	
 		
 	}
 
