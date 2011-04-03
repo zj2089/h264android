@@ -25,7 +25,7 @@ class RTPPacket implements Comparator<RTPPacket> {
 	 */
 	public int mF;
 	public int mNRI;
-	public int mType;
+	public int mType;	// the origin NALU type
 	
 	/*
 	 * NAL pay load

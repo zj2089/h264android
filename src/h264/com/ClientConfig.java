@@ -9,10 +9,10 @@ public interface ClientConfig {
 	/*
 	 * RTP port(UDP port)
 	 * PC end acts as server
-	 * android end acts as server
+	 * android end acts as client
 	 */
-	static final int CONFIG_SERVER_UDP_PORT = 2002;
-	static final int CONFIG_CLIENT_UDP_PORT = 2002;
+	static final int CONFIG_SERVER_UDP_PORT = 8000;
+	static final int CONFIG_CLIENT_UDP_PORT = 9000;
 	
 	/*
 	 * TCP port
@@ -24,14 +24,17 @@ public interface ClientConfig {
 	
 	
 	// to receive PPS and SPS
-	static final int CONFIG_BUFFER_SIZE = 30; // 30 bytes
+	static final int CONFIG_BUFFER_SIZE = 40*1024; // 30 bytes
 	
 	// the max size of one RTP packet
 	static final int CONFIG_RTP_PACKET_SIZE = 1400;
+	
+	// the number of buffer
+	static final int CONFIG_BUFFER_NUM = 6;
 	
 	/*
 	 * the size of RTP buffer,
 	 * RTP buffer is used to order the RTP packets
 	 */
-	static final int CONFIG_RTP_BUFFER_SIZE = 40*1024; //40k
+	static final int CONFIG_RTP_BUFFER_SIZE = CONFIG_BUFFER_NUM * CONFIG_RTP_PACKET_SIZE; 
 }

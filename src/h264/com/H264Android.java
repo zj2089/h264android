@@ -2,6 +2,7 @@ package h264.com;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -39,6 +40,8 @@ public class H264Android extends Activity {
 	          
 	        	String file = "/sdcard/352x288.264"; //352x288.264"; //240x320.264"; 
 	        	vv.PlayVideo(file);
+	        	
+	        	Log.d("pIC", "start to play");
 	        	
 	            return true;
 	        }

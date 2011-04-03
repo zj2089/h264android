@@ -126,16 +126,19 @@ class CTCPServerThread extends Thread {
 
 					int nalLen = highBit*256 + lowBit;
 
-					Log.d("NalLen", ""+nalLen);
+					Log.d("NalLen", "" + nalLen);
 
 					int bufLen = inputstream.read(buf, 0, nalLen);
-
-					mView.decodeNalAndDisplay(buf, bufLen);
 					
 					if( bufLen > 0 ) {
 						mRecvPacketNum++;
 						Log.d("pIC", "TCP recv len: " + bufLen);
 					}
+//					
+//					if( mRecvPacketNum % 20 == 0 )
+//						continue;
+
+					mView.decodeNalAndDisplay(buf, bufLen);
 						
 					
 					// received the PPS and SPS
