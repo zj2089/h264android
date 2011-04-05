@@ -77,18 +77,18 @@ class CRTPClientThread extends Thread {
 
 	private int toInt(byte b1, byte b2, byte b3, byte b4) {
 
-		int i1 = b1<0?(255+b1):b1;
-		int i2 = b2<0?(255+b2):b2;
-		int i3 = b3<0?(255+b3):b3;
-		int i4 = b4<0?(255+b4):b4;
-		return i1*(1<<24) + i2*65536 + i3*256 + i4;
+		int i1 = b1<0?(256+b1):b1;
+		int i2 = b2<0?(256+b2):b2;
+		int i3 = b3<0?(256+b3):b3;
+		int i4 = b4<0?(256+b4):b4;
+		return (i1<<24) + (i2<<16) + (i3<<8) + i4;
 	}
 
 	private int toInt(byte b1, byte b2) {
 
-		int i1 = b1<0?(255+b1):b1;
-		int i2 = b2<0?(255+b2):b2;
-		return i1*256 + i2;
+		int i1 = b1<0?(256+b1):b1;
+		int i2 = b2<0?(256+b2):b2;
+		return (i1<<8) + i2;
 	}
 	
     private void AllocRtpBuffer() {
@@ -162,9 +162,11 @@ class CRTPClientThread extends Thread {
 					/*
 					 * process the current NAL buffer
 					 */
-					Log.d("RTP", "last FU not found!!");
+//					Log.d("RTP", "last FU not found!!");
 					byte[] tmpNalu = tmpNalBuf.getBytes("ISO-8859-1");
 					tmpNalu[4] = (byte) (tmpNalu[4]|0x80);
+					Log.d("RTP", "one packet lose!!");
+					Log.d("RTP", "decoding NAL len:" + tmpNalu.length);
 					mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 				}
 
@@ -238,6 +240,7 @@ class CRTPClientThread extends Thread {
 						byte[] tmpNalu = tmpNalBuf.getBytes("ISO-8859-1");
 						tmpNalu[4] = (byte) (tmpNalu[4]|0x80);
 						Log.d("RTP", "decoding NAL len:" + tmpNalu.length);
+						Log.d("RTP", "one packet lose!!");
 						mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 					}
 				}
@@ -259,6 +262,7 @@ class CRTPClientThread extends Thread {
 						byte[] tmpNalu = tmpNalBuf.getBytes("ISO-8859-1");
 						tmpNalu[4] = (byte) (tmpNalu[4]|0x80);
 						Log.d("RTP", "decoding NAL len:" + tmpNalu.length);
+						Log.d("RTP", "one packet lose!!");
 						mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 					}					
 				}
@@ -301,7 +305,7 @@ class CRTPClientThread extends Thread {
 
 			mBufferUsedPos++;
 			
-			Log.d("RTP", "RTP Buf Pos:" + mBufferUsedPos);
+//			Log.d("RTP", "RTP Buf Pos:" + mBufferUsedPos);
 
 			// The RTP buffer is full
 			if( mBufferUsedPos == mRtpBufferLen ) {
