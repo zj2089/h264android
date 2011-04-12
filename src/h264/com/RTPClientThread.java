@@ -18,7 +18,7 @@ class CRTPClientThread extends Thread {
 
 	// the RTP buffer
 	RTPPacket[] mRtpBuffer;
-	int mRtpBufferLen;
+	int mRtpBufferNum;
 	int mBufferUsedPos;
 
 	private DatagramSocket mClientDatagram = null;
@@ -90,13 +90,13 @@ class CRTPClientThread extends Thread {
 
 	private void AllocRtpBuffer() {
 
-		mRtpBufferLen = ClientConfig.CONFIG_RTP_BUFFER_SIZE
+		mRtpBufferNum = ClientConfig.CONFIG_RTP_BUFFER_SIZE
 				/ ClientConfig.CONFIG_RTP_PACKET_SIZE;
 
 		// Log.d("RTP", "" + mRtpBufferLen);
 
-		mRtpBuffer = new RTPPacket[mRtpBufferLen];
-		for (int i = 0; i < mRtpBufferLen; i++)
+		mRtpBuffer = new RTPPacket[mRtpBufferNum];
+		for (int i = 0; i < mRtpBufferNum; i++)
 			mRtpBuffer[i] = new RTPPacket();
 		mBufferUsedPos = 0;
 	}
@@ -127,12 +127,22 @@ class CRTPClientThread extends Thread {
 
 			// set the FU pay load length, excluding the FU header
 			mRtpBuffer[pos].mPayloadLen--;
+			
+			// copy one by one
+			for(int i=0; i<mRtpBuffer[pos].mPayloadLen; i++) {
+				mRtpBuffer[pos].mPayload[i] = rtpPacket[i+14];
+			}
 
-			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 14,
-					rtpPacketLen);
+//			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 14,
+//					rtpPacketLen);
 		} else {
-			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 13,
-					rtpPacketLen);
+			
+			// copy one by one
+			for(int i=0; i<mRtpBuffer[pos].mPayloadLen; i++) {
+				mRtpBuffer[pos].mPayload[i] = rtpPacket[i+13];
+			}
+//			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 13,
+//					rtpPacketLen);
 		}
 	}
 
@@ -313,7 +323,7 @@ class CRTPClientThread extends Thread {
 			// Log.d("RTP", "RTP Buf Pos:" + mBufferUsedPos);
 
 			// The RTP buffer is full
-			if (mBufferUsedPos == mRtpBufferLen) {
+			if (mBufferUsedPos == mRtpBufferNum) {
 				try {
 					extractNalFromBuf();
 				} catch (UnsupportedEncodingException e) {
