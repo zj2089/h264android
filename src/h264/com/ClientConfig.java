@@ -4,7 +4,7 @@ package h264.com;
 public interface ClientConfig {
 	
 	// i.e., "127.0.0.1" on the development machine
-	static final String CONFIG_RTP_SERVER_HOST = "192.168.1.101";
+	static final String CONFIG_RTP_SERVER_HOST = "10.0.2.2";
 	
 	/*
 	 * RTP port(UDP port)

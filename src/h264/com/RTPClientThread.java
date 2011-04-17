@@ -112,7 +112,6 @@ class CRTPClientThread extends Thread {
 		mRtpBuffer[pos].mF = (rtpPacket[12] & 0x80) >> 7;
 		mRtpBuffer[pos].mNRI = (rtpPacket[12] & 0x60) >> 5;
 		mRtpBuffer[pos].mType = (rtpPacket[12] & 0x1f);
-//		mRtpBuffer[pos].mPayloadLen = rtpPacketLen - 13;
 
 		if (RTPPacket.FUA == mRtpBuffer[pos].mPacketType) {
 
@@ -127,34 +126,6 @@ class CRTPClientThread extends Thread {
 		int payloadLen = rtpPacketLen - offset;
 		mRtpBuffer[pos].mPayload = new byte[payloadLen];
 		System.arraycopy(rtpPacket, offset, mRtpBuffer[pos].mPayload, 0, payloadLen);
-
-//		if (RTPPacket.FUA == mRtpBuffer[pos].mPacketType) {
-//
-//			// set the FU pay load length, excluding the FU header
-////			mRtpBuffer[pos].mPayloadLen--;
-//			
-//			int payloadLen = rtpPacketLen - 14;
-//			mRtpBuffer[pos].mPayload = new byte[payloadLen];
-//			System.arraycopy(rtpPacket, 14, mRtpBuffer[pos].mPayload, 0, payloadLen);
-//			
-////			// copy one by one
-////			for(int i=0; i<mRtpBuffer[pos].mPayloadLen; i++) {
-////				mRtpBuffer[pos].mPayload[i] = rtpPacket[i+14];
-////			}
-//
-////			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 14,
-////					rtpPacketLen);
-//		} else {
-//			int payloadLen = rtpPacketLen - 13;
-//			mRtpBuffer[pos].mPayload = new byte[payloadLen];
-//			System.arraycopy(rtpPacket, 13, mRtpBuffer[pos].mPayload, 0, payloadLen);
-////			// copy one by one
-////			for(int i=0; i<mRtpBuffer[pos].mPayloadLen; i++) {
-////				mRtpBuffer[pos].mPayload[i] = rtpPacket[i+13];
-////			}
-////			mRtpBuffer[pos].mPayload = Arrays.copyOfRange(rtpPacket, 13,
-////					rtpPacketLen);
-//		}
 	}
 
 	public void extractNalFromBuf() throws UnsupportedEncodingException {
@@ -203,8 +174,7 @@ class CRTPClientThread extends Thread {
 				tmpHeader[4] = (byte) (tmpHeader[4] | mRtpBuffer[i].mType);
 
 				tmpNalBuf = new String(tmpHeader, 0, 5, "ISO-8859-1");
-				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,
-						/*0, mRtpBuffer[i].mPayloadLen,*/ "ISO-8859-1"));
+				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,"ISO-8859-1"));
 
 				byte[] tmpNalu = tmpNalBuf.getBytes("ISO-8859-1");
 
@@ -234,8 +204,7 @@ class CRTPClientThread extends Thread {
 				tmpHeader[4] = (byte) (tmpHeader[4] | mRtpBuffer[i].mType);
 
 				tmpNalBuf = new String(tmpHeader, 0, 5, "ISO-8859-1");
-				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,
-						/*0, mRtpBuffer[i].mPayloadLen,*/ "ISO-8859-1"));
+				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload, "ISO-8859-1"));
 			} else if (mRtpBuffer[i].mIsLast) {
 
 				Log.d("RTP", "last FU");
@@ -243,9 +212,7 @@ class CRTPClientThread extends Thread {
 				if (firstFuFound && mRtpBuffer[i].mTimestamp == timestamp
 						&& mRtpBuffer[i].mSeqNo == preNo + 1) {
 
-					tmpNalBuf = tmpNalBuf.concat(new String(
-							mRtpBuffer[i].mPayload, /*0,
-							mRtpBuffer[i].mPayloadLen,*/ "ISO-8859-1"));
+					tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload, "ISO-8859-1"));
 
 					// clear the firstFuFound
 					firstFuFound = false;
@@ -276,8 +243,7 @@ class CRTPClientThread extends Thread {
 						&& mRtpBuffer[i].mSeqNo == preNo + 1) {
 
 					tmpNalBuf = tmpNalBuf.concat(new String(
-							mRtpBuffer[i].mPayload,/* 0,
-							mRtpBuffer[i].mPayloadLen,*/ "ISO-8859-1"));
+							mRtpBuffer[i].mPayload, "ISO-8859-1"));
 					preNo++;
 				} else {
 					if (firstFuFound) {

@@ -30,8 +30,7 @@ class RTPPacket implements Comparator<RTPPacket> {
 	/*
 	 * NAL pay load
 	 */
-//	public int mPayloadLen;
-	public byte[] mPayload /*= new byte[ClientConfig.CONFIG_RTP_PACKET_SIZE]*/;
+	public byte[] mPayload;
 	
 	@Override
 	public int compare(RTPPacket p1, RTPPacket p2) {
