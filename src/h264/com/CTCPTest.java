@@ -120,11 +120,10 @@ class CTCPServerThread extends Thread {
 					byte btNalLen[] = new byte[2]; 
 
 					inputstream.read(btNalLen, 0, 2);
-
-					int highBit = ((int)btNalLen[0]>=0)?((int)btNalLen[0]):(256+(int)btNalLen[0]);
-					int lowBit = ((int)btNalLen[1]>=0)?((int)btNalLen[1]):(256+(int)btNalLen[1]);
-
-					int nalLen = highBit*256 + lowBit;
+					
+					int highBit =  btNalLen[0]<0 ? 256 + btNalLen[0] : btNalLen[0];
+					int lowBit = btNalLen[1]<0 ? 256 + btNalLen[1] : btNalLen[1];
+					int nalLen = (highBit<<8) + lowBit;
 
 					Log.d("NalLen", "" + nalLen);
 
