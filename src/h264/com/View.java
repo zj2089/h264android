@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Bitmap.Config;
 import android.view.View;
 
-class VView extends View implements Runnable{
+class WVSSView extends View implements Runnable{
 	   
     Bitmap  mBitQQ  = null;   
     
@@ -35,10 +35,10 @@ class VView extends View implements Runnable{
     public native int DecoderNal(byte[] in, int insize, byte[] out);
     
     static {
-        System.loadLibrary("H264Android");
+        System.loadLibrary("H264Decoder");
     }
        
-    public VView(Context context) {
+    public WVSSView(Context context) {
         super(context);
         setFocusable(true);
         

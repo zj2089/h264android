@@ -10,7 +10,7 @@ import android.util.Log;
 
 class CTCPServerThread extends Thread {
 	
-	private VView mView;
+	private WVSSView mView;
 	
 	// 套接字服务接口
 	private ServerSocket mServerSocket = null;
@@ -18,7 +18,7 @@ class CTCPServerThread extends Thread {
 	// The number of received packets
 	public int mRecvPacketNum = 0;
 
-	public CTCPServerThread(VView view) {
+	public CTCPServerThread(WVSSView view) {
 
 		// 初始化服务套接字
 		try {
@@ -88,14 +88,14 @@ class CTCPServerThread extends Thread {
 	
 	class CTCPSessionThread extends Thread {
 		
-		VView mView;
+		WVSSView mView;
 		
 		// 与客户端通信套接字
 		private boolean mIsFinish = false;
 		private InputStream inputstream;
 		FileInputStream fis = null; 
 
-		public CTCPSessionThread(VView view, Socket socket) {
+		public CTCPSessionThread(WVSSView view, Socket socket) {
 
 			// 获取会话用输入/输出流
 			try {

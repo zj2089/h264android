@@ -6,14 +6,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class H264Android extends Activity {
+public class WVSS extends Activity {
 
-	VView vv;
+	WVSSView vv;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        vv = new VView(this);
+        vv = new WVSSView(this);
         setContentView(vv);
     }
     

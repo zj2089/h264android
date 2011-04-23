@@ -14,7 +14,7 @@ import android.util.Log;
 
 class CRTPClientThread extends Thread {
 
-	VView mView;
+	WVSSView mView;
 
 	// the RTP buffer
 	RTPPacket[] mRtpBuffer;
@@ -44,7 +44,7 @@ class CRTPClientThread extends Thread {
 	// to save the NAL buffer temporarily for one FU
 	String tmpNalBuf;
 
-	public CRTPClientThread(VView view) {
+	public CRTPClientThread(WVSSView view) {
 
 		// The Client doesn't need to specify the server host and port when
 		// initializing
