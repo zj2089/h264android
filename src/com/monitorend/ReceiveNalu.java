@@ -1,10 +1,10 @@
-package h264.com;
+package com.monitorend;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import java.util.Comparator;
 
 import android.util.Log;
 
-class CRTPClientThread extends Thread {
+class RtpClientThread extends Thread {
 
 	WVSSView mView;
 
@@ -21,7 +21,7 @@ class CRTPClientThread extends Thread {
 	int mRtpBufferNum;
 	int mBufferUsedPos;
 
-	private DatagramSocket mClientDatagram = null;
+	private MulticastSocket mClientDatagram = null;
 
 	// the first FU of some NALU appears
 	boolean firstFuFound = false;
@@ -44,15 +44,19 @@ class CRTPClientThread extends Thread {
 	// to save the NAL buffer temporarily for one FU
 	String tmpNalBuf;
 
-	public CRTPClientThread(WVSSView view) {
+	public RtpClientThread(WVSSView view, String multicastAddr) {
 
 		// The Client doesn't need to specify the server host and port when
 		// initializing
 		try {
-			mClientDatagram = new DatagramSocket(
-					ClientConfig.CONFIG_CLIENT_UDP_PORT);
+			mClientDatagram = new MulticastSocket();
+			InetAddress multicastGroup = InetAddress.getByName(multicastAddr);
+			mClientDatagram.joinGroup(multicastGroup);
 		} catch (SocketException e) {
-
+			Log.d("RTP", "SocketException in RTPClientThread");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.d("RTP", "IOException in RTPClientThread");
 			e.printStackTrace();
 		}
 
@@ -90,10 +94,7 @@ class CRTPClientThread extends Thread {
 
 	private void AllocRtpBuffer() {
 
-		mRtpBufferNum = ClientConfig.CONFIG_RTP_BUFFER_SIZE
-				/ ClientConfig.CONFIG_RTP_PACKET_SIZE;
-
-		// Log.d("RTP", "" + mRtpBufferLen);
+		mRtpBufferNum = ClientConfig.CONFIG_BUFFER_NUM;
 
 		mRtpBuffer = new RTPPacket[mRtpBufferNum];
 		for (int i = 0; i < mRtpBufferNum; i++)
@@ -121,11 +122,12 @@ class CRTPClientThread extends Thread {
 			// set the origin media type
 			mRtpBuffer[pos].mType = (rtpPacket[13] & 0x1f);
 		}
-		
+
 		int offset = RTPPacket.FUA == mRtpBuffer[pos].mPacketType ? 14 : 13;
 		int payloadLen = rtpPacketLen - offset;
 		mRtpBuffer[pos].mPayload = new byte[payloadLen];
-		System.arraycopy(rtpPacket, offset, mRtpBuffer[pos].mPayload, 0, payloadLen);
+		System.arraycopy(rtpPacket, offset, mRtpBuffer[pos].mPayload, 0,
+				payloadLen);
 	}
 
 	public void extractNalFromBuf() throws UnsupportedEncodingException {
@@ -174,7 +176,8 @@ class CRTPClientThread extends Thread {
 				tmpHeader[4] = (byte) (tmpHeader[4] | mRtpBuffer[i].mType);
 
 				tmpNalBuf = new String(tmpHeader, 0, 5, "ISO-8859-1");
-				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,"ISO-8859-1"));
+				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,
+						"ISO-8859-1"));
 
 				byte[] tmpNalu = tmpNalBuf.getBytes("ISO-8859-1");
 
@@ -204,7 +207,8 @@ class CRTPClientThread extends Thread {
 				tmpHeader[4] = (byte) (tmpHeader[4] | mRtpBuffer[i].mType);
 
 				tmpNalBuf = new String(tmpHeader, 0, 5, "ISO-8859-1");
-				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload, "ISO-8859-1"));
+				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,
+						"ISO-8859-1"));
 			} else if (mRtpBuffer[i].mIsLast) {
 
 				Log.d("RTP", "last FU");
@@ -212,7 +216,8 @@ class CRTPClientThread extends Thread {
 				if (firstFuFound && mRtpBuffer[i].mTimestamp == timestamp
 						&& mRtpBuffer[i].mSeqNo == preNo + 1) {
 
-					tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload, "ISO-8859-1"));
+					tmpNalBuf = tmpNalBuf.concat(new String(
+							mRtpBuffer[i].mPayload, "ISO-8859-1"));
 
 					// clear the firstFuFound
 					firstFuFound = false;

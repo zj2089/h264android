@@ -1,4 +1,4 @@
-package h264.com;	
+package com.monitorend;	
 
 // Some Constant
 public interface ClientConfig {
@@ -36,5 +36,16 @@ public interface ClientConfig {
 	 * the size of RTP buffer,
 	 * RTP buffer is used to order the RTP packets
 	 */
-	static final int CONFIG_RTP_BUFFER_SIZE = CONFIG_BUFFER_NUM * CONFIG_RTP_PACKET_SIZE; 
+	static final int CONFIG_RTP_BUFFER_SIZE = CONFIG_BUFFER_NUM * CONFIG_RTP_PACKET_SIZE;
+	
+	/**
+	 * the IP address of center server
+	 */
+	static final String CENTER_SERVER_IP_ADDRESS = "127.0.0.1";
+	
+	/**
+	 * the port of center server that listening the request of monitor end
+	 */
+	static final int CENTER_SERVER_PORT = 8000;
+	
 }

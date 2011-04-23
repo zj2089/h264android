@@ -3,6 +3,6 @@
     <string name="hello">WVSS</string>
     <string name="app_name">WVSS</string>
     
-    <string name="play">连接监控服务器</string>   
+    <string name="connect_server">连接监控服务器</string>   
     <string name="exit">退出</string>
 </resources>
