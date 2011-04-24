@@ -16,7 +16,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := H264Android
-LOCAL_SRC_FILES := H264Android.c cabac.c common.c dsputil.c golomb.c h264.c h264utils.c mpegvideo.c
+LOCAL_MODULE    := H264Decoder
+LOCAL_SRC_FILES := avc_bitstream.cpp avc_dec.cpp avcdec_api.cpp com_monitorend_WVSSView.cpp deblock.cpp dpb.cpp fmo.cpp header.cpp itrans.cpp mb_access.cpp pred_inter.cpp pred_intra.cpp reflist.cpp residual.cpp slice.cpp vlc.cpp
 
 include $(BUILD_SHARED_LIBRARY)

@@ -17,7 +17,7 @@ class WVSSView extends View{
    
     public native int InitDecoder(int width, int height);
     public native int UninitDecoder(); 
-    public native int DecoderNal(byte[] in, int insize, byte[] out);
+    public native int DecodeNal(byte[] in, int insize, byte[] out);
     
     static {
         System.loadLibrary("H264Decoder");
@@ -38,7 +38,7 @@ class WVSSView extends View{
     
     // decode the NALU and display the picture
     public void decodeNalAndDisplay(byte[] nalBuf, int nalLen) {
-    	int iTmp = DecoderNal(nalBuf, nalLen, mPixel);
+    	int iTmp = DecodeNal(nalBuf, nalLen, mPixel);
     	if( iTmp > 0 ) {
     		postInvalidate();
     	}
