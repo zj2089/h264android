@@ -2,7 +2,6 @@ package com.monitorend;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,8 +34,7 @@ public class WVSS extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {        
 	        case CONNECTING_ID:
-	        {	        	
-	        	Log.d("pIC", "start to play");
+	        {	
 	        	new ConnectCenterServerThread(mWvssView).start();
 	        	
 	            return true;

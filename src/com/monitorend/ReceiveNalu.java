@@ -6,13 +6,12 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Comparator;
 
 import android.util.Log;
 
-class RtpClientThread extends Thread {
+class ReceiveNaluThread extends Thread {
 
 	WVSSView mView;
 
@@ -44,12 +43,12 @@ class RtpClientThread extends Thread {
 	// to save the NAL buffer temporarily for one FU
 	String tmpNalBuf;
 
-	public RtpClientThread(WVSSView view, String multicastAddr) {
+	public ReceiveNaluThread(WVSSView view, String multicastAddr) {
 
 		// The Client doesn't need to specify the server host and port when
 		// initializing
 		try {
-			mClientDatagram = new MulticastSocket();
+			mClientDatagram = new MulticastSocket(ClientConfig.PORT_MONITOR_END_RECEIVE_RTP);
 			InetAddress multicastGroup = InetAddress.getByName(multicastAddr);
 			mClientDatagram.joinGroup(multicastGroup);
 		} catch (SocketException e) {
@@ -60,17 +59,17 @@ class RtpClientThread extends Thread {
 			e.printStackTrace();
 		}
 
-		// specify the server host and port
-		try {
-			mClientDatagram.connect(InetAddress
-					.getByName(ClientConfig.CONFIG_RTP_SERVER_HOST),
-					ClientConfig.CONFIG_SERVER_UDP_PORT);
-			Log.d("RTP", "UDP connected");
-		} catch (UnknownHostException e) {
-
-			Log.d("RTP", "UDP connecting failed");
-			e.printStackTrace();
-		}
+//		// specify the server host and port
+//		try {
+//			mClientDatagram.connect(InetAddress
+//					.getByName(ClientConfig.CONFIG_RTP_SERVER_HOST),
+//					ClientConfig.CONFIG_SERVER_UDP_PORT);
+//			Log.d("RTP", "UDP connected");
+//		} catch (UnknownHostException e) {
+//
+//			Log.d("RTP", "UDP connecting failed");
+//			e.printStackTrace();
+//		}
 
 		mView = view;
 		AllocRtpBuffer();
@@ -94,7 +93,7 @@ class RtpClientThread extends Thread {
 
 	private void AllocRtpBuffer() {
 
-		mRtpBufferNum = ClientConfig.CONFIG_BUFFER_NUM;
+		mRtpBufferNum = ClientConfig.RTP_PACKET_BUFFER_NUM;
 
 		mRtpBuffer = new RTPPacket[mRtpBufferNum];
 		for (int i = 0; i < mRtpBufferNum; i++)
@@ -276,7 +275,7 @@ class RtpClientThread extends Thread {
 	public void run() {
 
 		// to receive the RTP packet
-		byte[] rtpPacket = new byte[ClientConfig.CONFIG_RTP_PACKET_SIZE];
+		byte[] rtpPacket = new byte[ClientConfig.RTP_PACKET_MAX_SIZE];
 		DatagramPacket rtpDatagram = new DatagramPacket(rtpPacket,
 				rtpPacket.length);
 		int rtpPacketLen;

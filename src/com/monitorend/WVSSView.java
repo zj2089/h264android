@@ -27,9 +27,9 @@ class WVSSView extends View{
         super(context);
         setFocusable(true);
         
+        mPixel = new byte[width*height*2];      
         Arrays.fill(mPixel, (byte) 0);
-        
-        mPixel = new byte[width*height*2];
+
         mBuffer = ByteBuffer.wrap( mPixel );
         mVideoBit = Bitmap.createBitmap(width, height, Config.RGB_565); 
         

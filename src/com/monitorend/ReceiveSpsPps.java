@@ -2,8 +2,6 @@ package com.monitorend;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
 
 import android.util.Log;
 
@@ -11,45 +9,19 @@ class RecvSpsPpsThread extends Thread {
 	
 	private WVSSView mView;
 	
-	// use to receive SPS & PPS
-	private Socket mSocket;
-	
 	// The number of received packets
 	public int mRecvPacketNum = 0;
 	
-	private RtpClientThread mRtpClientThread;
+	private ReceiveNaluThread mReceiveNaluThread;
 	private InputStream mInputStream;
 
 	private boolean mIsFinish = false;
 
-	public RecvSpsPpsThread(WVSSView view, RtpClientThread rtpClientThread) {
+	public RecvSpsPpsThread(WVSSView view, ReceiveNaluThread rtpClientThread, InputStream inputStream) {
 
 		mView = view;
-		mRtpClientThread = rtpClientThread;
-
-		try {
-			/*
-			 * Creates a new streaming socket connected to the target host 
-			 * specified by the parameters dstName and dstPort. 
-			 */
-			mSocket = new Socket(
-					ClientConfig.CENTER_SERVER_IP_ADDRESS,
-					ClientConfig.CENTER_SERVER_PORT
-					);
-		} catch (UnknownHostException e) {
-			Log.d("Conn", "UnknownHostException in ReceiveSpsPps");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.d("Conn", "IOException in ReceiveSpsPps");
-			e.printStackTrace();
-		}
-		
-		try {
-			mInputStream = mSocket.getInputStream();
-		} catch (IOException e) {
-			Log.d("Conn", "IOException in ReceiveSpsPps");
-			e.printStackTrace();
-		}
+		mReceiveNaluThread = rtpClientThread;
+		mInputStream = inputStream;
 	}
 
 	@Override
@@ -58,7 +30,7 @@ class RecvSpsPpsThread extends Thread {
 		while(!mIsFinish) {
 
 			try {
-				byte buf[] = new byte[ClientConfig.CONFIG_BUFFER_SIZE];
+				byte buf[] = new byte[ClientConfig.SPS_PPS_BUFFER_SIZE];
 				byte btNalLen[] = new byte[2]; 
 
 				mInputStream.read(btNalLen, 0, 2);
@@ -89,7 +61,7 @@ class RecvSpsPpsThread extends Thread {
 			    	Log.d("pIC", "start the RTP Thread");
 			    	
 			    	// start one thread to process RTP packet
-			    	mRtpClientThread.start();
+			    	mReceiveNaluThread.start();
 			    	
 					break;
 				}
