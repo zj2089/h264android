@@ -4,5 +4,9 @@
     <string name="app_name">WVSS</string>
     
     <string name="connect_server">连接监控服务器</string>   
-    <string name="exit">退出</string>
+    <string name="exit">退出</string>   
+    <string name="InputIpAddress">请输入监控服务器IP地址</string>   
+    <string name="cur_state"></string>   
+    <string name="default_ip_addr">10.0.2.2</string>
+    <string name="context_menu_header">选择采集终端</string>
 </resources>

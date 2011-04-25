@@ -30,35 +30,20 @@ class RecvSpsPpsThread extends Thread {
 		while(!mIsFinish) {
 
 			try {
-				byte buf[] = new byte[ClientConfig.SPS_PPS_BUFFER_SIZE];
-				byte btNalLen[] = new byte[2]; 
+				byte spsPpsBuf[] = new byte[ClientConfig.SPS_PPS_BUFFER_SIZE];
+				int spsPpsLen = mInputStream.read();
 
-				mInputStream.read(btNalLen, 0, 2);
+				mInputStream.read(spsPpsBuf, 0, spsPpsLen);
 				
-				int highBit =  btNalLen[0]<0 ? 256 + btNalLen[0] : btNalLen[0];
-				int lowBit = btNalLen[1]<0 ? 256 + btNalLen[1] : btNalLen[1];
-				int nalLen = (highBit<<8) + lowBit;
+				mRecvPacketNum++;
 
-				Log.d("NalLen", "" + nalLen);
-
-				int bufLen = mInputStream.read(buf, 0, nalLen);
-				
-				if( bufLen > 0 ) {
-					mRecvPacketNum++;
-					Log.d("pIC", "TCP recv len: " + bufLen);
-				}
-//				
-//				if( mRecvPacketNum % 20 == 0 )
-//					continue;
-
-				mView.decodeNalAndDisplay(buf, bufLen);
-					
+				mView.decodeNalAndDisplay(spsPpsBuf, spsPpsLen);
 				
 				// received the PPS and SPS
 				if( 2 == mRecvPacketNum ) {
 					
 					Log.d("pIC", "received the PPS and SPS");
-			    	Log.d("pIC", "start the RTP Thread");
+			    	Log.d("pIC", "start receiving NALU");
 			    	
 			    	// start one thread to process RTP packet
 			    	mReceiveNaluThread.start();

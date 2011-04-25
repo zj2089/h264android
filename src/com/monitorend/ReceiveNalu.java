@@ -3,8 +3,7 @@ package com.monitorend;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
+import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -20,7 +19,8 @@ class ReceiveNaluThread extends Thread {
 	int mRtpBufferNum;
 	int mBufferUsedPos;
 
-	private MulticastSocket mClientDatagram = null;
+//	private MulticastSocket mClientDatagram = null;
+	private DatagramSocket mClientDatagram = null;
 
 	// the first FU of some NALU appears
 	boolean firstFuFound = false;
@@ -47,15 +47,23 @@ class ReceiveNaluThread extends Thread {
 
 		// The Client doesn't need to specify the server host and port when
 		// initializing
+//		try {
+//			mClientDatagram = new MulticastSocket(ClientConfig.PORT_MONITOR_END_RECEIVE_RTP);
+//			InetAddress multicastGroup = InetAddress.getByName(multicastAddr);
+//			Log.d("RTP", "multiAddr: " + multicastAddr);
+//			mClientDatagram.joinGroup(multicastGroup);
+//		} catch (SocketException e) {
+//			Log.d("RTP", "SocketException in RTPClientThread");
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			Log.d("RTP", "IOException in RTPClientThread");
+//			e.printStackTrace();
+//		}
+		
 		try {
-			mClientDatagram = new MulticastSocket(ClientConfig.PORT_MONITOR_END_RECEIVE_RTP);
-			InetAddress multicastGroup = InetAddress.getByName(multicastAddr);
-			mClientDatagram.joinGroup(multicastGroup);
+			mClientDatagram = new DatagramSocket(10000);
 		} catch (SocketException e) {
-			Log.d("RTP", "SocketException in RTPClientThread");
-			e.printStackTrace();
-		} catch (IOException e) {
-			Log.d("RTP", "IOException in RTPClientThread");
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -137,13 +145,8 @@ class ReceiveNaluThread extends Thread {
 
 		for (int i = 0; i < mRtpBuffer.length; i++) {
 
-			Log.d("RTP", "ts:" + mRtpBuffer[i].mTimestamp);
-			Log.d("RTP", "seq_no:" + mRtpBuffer[i].mSeqNo);
-
 			if (RTPPacket.SGN == mRtpBuffer[i].mPacketType) {
-
-				Log.d("RTP", "single NAL unit!!!");
-
+				
 				// the previous NALU is not complete,not finding the last FU
 				if (firstFuFound) {
 
@@ -159,7 +162,7 @@ class ReceiveNaluThread extends Thread {
 					tmpNalu[4] = (byte) (tmpNalu[4] | 0x80);
 					Log.d("RTP", "one packet lose!!");
 					Log.d("RTP", "decoding NAL len:" + tmpNalu.length);
-					// mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
+					mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 				}
 
 				// set the start code(0x00000001)
@@ -185,8 +188,6 @@ class ReceiveNaluThread extends Thread {
 				mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 			} else if (mRtpBuffer[i].mIsFirst) {
 
-				Log.d("RTP", "first FU");
-
 				firstFuFound = true;
 				lastFuFound = false;
 
@@ -209,8 +210,6 @@ class ReceiveNaluThread extends Thread {
 				tmpNalBuf = tmpNalBuf.concat(new String(mRtpBuffer[i].mPayload,
 						"ISO-8859-1"));
 			} else if (mRtpBuffer[i].mIsLast) {
-
-				Log.d("RTP", "last FU");
 
 				if (firstFuFound && mRtpBuffer[i].mTimestamp == timestamp
 						&& mRtpBuffer[i].mSeqNo == preNo + 1) {
@@ -235,7 +234,7 @@ class ReceiveNaluThread extends Thread {
 						tmpNalu[4] = (byte) (tmpNalu[4] | 0x80);
 						Log.d("RTP", "decoding NAL len:" + tmpNalu.length);
 						Log.d("RTP", "one packet lose!!");
-						// mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
+						mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 					}
 				}
 
@@ -259,7 +258,7 @@ class ReceiveNaluThread extends Thread {
 						tmpNalu[4] = (byte) (tmpNalu[4] | 0x80);
 						Log.d("RTP", "decoding NAL len:" + tmpNalu.length);
 						Log.d("RTP", "one packet lose!!");
-						// mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
+						mView.decodeNalAndDisplay(tmpNalu, tmpNalu.length);
 					}
 				}
 			}
@@ -282,7 +281,7 @@ class ReceiveNaluThread extends Thread {
 
 		while (true) {
 
-			// Log.d("RTP", "start RTP receiving");
+			Log.d("RTP", "start RTP receiving");
 			try {
 				mClientDatagram.receive(rtpDatagram);
 			} catch (IOException e) {
@@ -290,18 +289,15 @@ class ReceiveNaluThread extends Thread {
 				Log.d("RTP", e.getMessage());
 				e.printStackTrace();
 			}
-			// Log.d("RTP", "one packet received!!");
+			Log.d("RTP", "one packet received!!");
 
 			rtpPacketLen = rtpDatagram.getLength();
 			rtpPacket = rtpDatagram.getData();
 
-			// Log.d("RTP", "RTP packet len:"+rtpPacketLen);
 
 			fillRtpPacket(mBufferUsedPos, rtpPacket, rtpPacketLen);
 
 			mBufferUsedPos++;
-
-			// Log.d("RTP", "RTP Buf Pos:" + mBufferUsedPos);
 
 			// The RTP buffer is full
 			if (mBufferUsedPos == mRtpBufferNum) {
