@@ -9,7 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Bitmap.Config;
 import android.view.View;
 
-class WVSSView extends View{
+class WVSSView extends View {
 	
     private byte [] mPixel;    
     private ByteBuffer mBuffer;

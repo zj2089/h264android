@@ -3,7 +3,8 @@ package com.monitorend;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -19,8 +20,8 @@ class ReceiveNaluThread extends Thread {
 	int mRtpBufferNum;
 	int mBufferUsedPos;
 
-//	private MulticastSocket mClientDatagram = null;
-	private DatagramSocket mClientDatagram = null;
+	private MulticastSocket mClientDatagram = null;
+//	private DatagramSocket mClientDatagram = null;
 
 	// the first FU of some NALU appears
 	boolean firstFuFound = false;
@@ -42,30 +43,33 @@ class ReceiveNaluThread extends Thread {
 
 	// to save the NAL buffer temporarily for one FU
 	String tmpNalBuf;
+	
+	String tag = "ReceiveNalu";
 
 	public ReceiveNaluThread(WVSSView view, String multicastAddr) {
 
-		// The Client doesn't need to specify the server host and port when
-		// initializing
-//		try {
-//			mClientDatagram = new MulticastSocket(ClientConfig.PORT_MONITOR_END_RECEIVE_RTP);
-//			InetAddress multicastGroup = InetAddress.getByName(multicastAddr);
-//			Log.d("RTP", "multiAddr: " + multicastAddr);
-//			mClientDatagram.joinGroup(multicastGroup);
-//		} catch (SocketException e) {
-//			Log.d("RTP", "SocketException in RTPClientThread");
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			Log.d("RTP", "IOException in RTPClientThread");
-//			e.printStackTrace();
-//		}
-		
 		try {
-			mClientDatagram = new DatagramSocket(10000);
+			mClientDatagram = new MulticastSocket(ClientConfig.PORT_MONITOR_END_RECEIVE_RTP);
+			InetAddress multicastGroup = InetAddress.getByName(multicastAddr);
+			Log.d(tag, "multiAddr: " + multicastAddr);
+			mClientDatagram.joinGroup(multicastGroup);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
+			Log.d(tag, "SocketException in RTPClientThread");
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.d("RTP", "IOException in RTPClientThread");
 			e.printStackTrace();
 		}
+		
+//		/**
+//		 * use UDP to transfer data
+//		 */
+//		try {
+//			mClientDatagram = new DatagramSocket(10000);
+//		} catch (SocketException e) {
+//			
+//			e.printStackTrace();
+//		}
 
 //		// specify the server host and port
 //		try {
@@ -240,8 +244,6 @@ class ReceiveNaluThread extends Thread {
 
 			} else {
 
-				Log.d("RTP", "middle FU");
-
 				if (firstFuFound && mRtpBuffer[i].mTimestamp == timestamp
 						&& mRtpBuffer[i].mSeqNo == preNo + 1) {
 
@@ -281,7 +283,7 @@ class ReceiveNaluThread extends Thread {
 
 		while (true) {
 
-			Log.d("RTP", "start RTP receiving");
+			Log.d(tag, "start RTP receiving");
 			try {
 				mClientDatagram.receive(rtpDatagram);
 			} catch (IOException e) {
@@ -289,7 +291,7 @@ class ReceiveNaluThread extends Thread {
 				Log.d("RTP", e.getMessage());
 				e.printStackTrace();
 			}
-			Log.d("RTP", "one packet received!!");
+			Log.d(tag, "one packet received!!");
 
 			rtpPacketLen = rtpDatagram.getLength();
 			rtpPacket = rtpDatagram.getData();

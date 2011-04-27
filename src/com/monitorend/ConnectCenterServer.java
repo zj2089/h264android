@@ -36,6 +36,8 @@ class ConnectCenterServerThread extends Thread {
 			Intent intent) {
 		
 		mAvailableCaptureEndList = availableCaptureEndList;
+		mAvailableCaptureEndList.clear();
+		
 		mMonitorEndChoice = null;
 		mActivity = activity;
 		mCenterServerIpAddress = centerServerIpAddress;
