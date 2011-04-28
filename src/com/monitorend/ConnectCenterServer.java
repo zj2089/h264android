@@ -178,31 +178,31 @@ class ConnectCenterServerThread extends Thread {
 			e.printStackTrace();
 		}
 		
-		/*
-		 * get the multicast address
-		 */
-		String multicastAddress = null;
-		byte[] multicastAddr = null;
-		try {
-			int multicastAddrLen = mInputStream.read();
-			multicastAddr = new byte[multicastAddrLen];
-			mInputStream.read(multicastAddr, 0, multicastAddrLen);
-			
-		} catch (IOException e) {
-			Log.d("Conn", "IOException in ConnectCenterServer");
-			e.printStackTrace();
-		}
-		
-		try {
-			multicastAddress = new String(multicastAddr, "ISO-8859-1");
-		} catch (UnsupportedEncodingException e) {
-			Log.d("Conn", "UnsupportedEncodingException in ConnectCenterServer");
-			e.printStackTrace();
-		}
+//		/*
+//		 * get the multicast address
+//		 */
+//		String multicastAddress = null;
+//		byte[] multicastAddr = null;
+//		try {
+//			int multicastAddrLen = mInputStream.read();
+//			multicastAddr = new byte[multicastAddrLen];
+//			mInputStream.read(multicastAddr, 0, multicastAddrLen);
+//			
+//		} catch (IOException e) {
+//			Log.d("Conn", "IOException in ConnectCenterServer");
+//			e.printStackTrace();
+//		}
+//		
+//		try {
+//			multicastAddress = new String(multicastAddr, "ISO-8859-1");
+//		} catch (UnsupportedEncodingException e) {
+//			Log.d("Conn", "UnsupportedEncodingException in ConnectCenterServer");
+//			e.printStackTrace();
+//		}
 		
 		MyApp mMyApp = (MyApp) mActivity.getApplicationContext();	
 		mMyApp.setSocket(mSocket);
-		mIntent.putExtra("multicastAddress", multicastAddress);
+//		mIntent.putExtra("multicastAddress", multicastAddress);
 		
 		mActivity.startActivity(mIntent);
 	}

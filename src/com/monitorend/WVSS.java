@@ -18,7 +18,8 @@ public class WVSS extends Activity {
 
 	private WVSSView mWvssView;
 	private ReceiveNaluThread mReceiveNaluThread;
-	private MulticastLock mMulticastLock;
+//	private MulticastLock mMulticastLock;
+	private DatagramPacketQueue mDatagramPacketQueue;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,17 +27,17 @@ public class WVSS extends Activity {
         mWvssView = new WVSSView(this, 320, 240);
         setContentView(mWvssView);
         
-        // allow this application to receive multicast packets
-		WifiManager wifi = (WifiManager) getSystemService( Context.WIFI_SERVICE );
-		mMulticastLock = wifi.createMulticastLock("receive_nalu");
-		mMulticastLock.setReferenceCounted(false);
-		mMulticastLock.acquire();
+//        // allow this application to receive multicast packets
+//		WifiManager wifi = (WifiManager) getSystemService( Context.WIFI_SERVICE );
+//		mMulticastLock = wifi.createMulticastLock("receive_nalu");
+//		mMulticastLock.setReferenceCounted(false);
+//		mMulticastLock.acquire();
         
         MyApp myApp = (MyApp) getApplicationContext();
         Socket socket = myApp.getSocket();
         
-        Intent intent = this.getIntent();
-        String multicastAddress = intent.getStringExtra("multicastAddress");
+//        Intent intent = this.getIntent();
+//        String multicastAddress = intent.getStringExtra("multicastAddress");
         
         InputStream inputStream = null;
         try {
@@ -45,8 +46,12 @@ public class WVSS extends Activity {
 			e.printStackTrace();
 		}
 		
-        mReceiveNaluThread = new ReceiveNaluThread(mWvssView, multicastAddress);
+		mDatagramPacketQueue = new DatagramPacketQueue();
+		
+        mReceiveNaluThread = new ReceiveNaluThread(/*multicastAddress, */mDatagramPacketQueue);
 		new RecvSpsPpsThread(mWvssView, mReceiveNaluThread, inputStream).start();
+		
+		new ProcessRtpPacketThread(mWvssView, mDatagramPacketQueue).start();
     }
     
     @Override
@@ -56,7 +61,7 @@ public class WVSS extends Activity {
 		
 		Log.i("STOP", "WVSS activity stopping");
 		
-		mMulticastLock.release();
+//		mMulticastLock.release();
 	}
 
 	// Menu item IDs
