@@ -9,4 +9,16 @@
     <string name="cur_state"></string>   
     <string name="default_ip_addr">10.0.2.2</string>
     <string name="context_menu_header">选择采集终端</string>
+    <string name="sendCommand">Send Command</string>
+    <string name="CommandType">Command Type:</string>
+    <string name="Parameter1">Parameter1</string>
+    <string name="Argument1">Argument1</string>
+    <string name="Argument2">Argument2</string>
+    <string name="Argument3">Argument3</string>
+    <string name="Argument1_default">0</string>
+    <string name="Argument2_default">0</string>
+    <string name="Argument3_default">0</string>
+    <string name="CommandTitle">Command Option</string>
+    <string name="command_ok">OK</string>
+    <string name="command_cancle">Cancle</string>
 </resources>
