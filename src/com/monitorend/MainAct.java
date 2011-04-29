@@ -78,7 +78,12 @@ public class MainAct extends Activity {
 		@Override
 		public void onClick(View v) {
 			
-			Log.d("CLick", "click button");
+			/*
+			 *  set the global variable : CenterServerIp
+			 */
+			((MyApp)getApplicationContext()).setCenterServerIp(mEditText.getText().toString());
+			
+			
 			mConnectCenterServerThread = new ConnectCenterServerThread(
 					mAvailableCaptureEndList, 
 					mActivity,
@@ -91,7 +96,10 @@ public class MainAct extends Activity {
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		mConnectCenterServerThread.setMonitorEndChoice(item.getTitle().toString());
+		
+		String selectedItem = item.getTitle().toString();
+		mConnectCenterServerThread.setMonitorEndChoice(selectedItem);
+		((MyApp)getApplicationContext()).setCurCaptureEnd(selectedItem);
 		return super.onContextItemSelected(item);
 	}
 	
@@ -100,6 +108,8 @@ public class MainAct extends Activity {
 		@Override
 		public void onCreateContextMenu(ContextMenu menu, View v,
 				ContextMenuInfo menuInfo) {
+			
+			menu.clear();
 
 			menu.setHeaderTitle(R.string.context_menu_header);
 			for(int i = 0; i<mAvailableCaptureEndList.size(); i++) {

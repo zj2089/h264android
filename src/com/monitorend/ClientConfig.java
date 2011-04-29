@@ -31,4 +31,9 @@ public interface ClientConfig {
 	 * the port monitor end receive SPS & PPS from
 	 */
 	static final int MONITOR_END_RECV_SPS_PORT = 9000;
+	
+	/**
+	 * the port monitor end sends command to
+	 */
+	static final int PORT_MONITOR_END_SEND_COMMAND_TO = 11000;
 }

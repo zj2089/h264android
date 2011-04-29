@@ -11,16 +11,16 @@
     	android:layout_marginRight="20dip"     	
      	android:layout_width="match_parent" 
      	android:layout_height="wrap_content" 
-     	android:textAppearance="?android:attr/textAppearanceMedium" 
      	android:gravity="left">
      </TextView>
       
      <Spinner 
-	     android:id="@+id/spinner1" 
 	     android:layout_width="match_parent" 
 	     android:layout_height="wrap_content"
 	     android:layout_marginLeft="20dip"
-		 android:layout_marginRight="20dip">
+		 android:layout_marginRight="20dip" 
+		 android:prompt = "@string/command_type_prompt"
+		 android:id="@+id/spinner_commandtype">
      </Spinner>
      
      <TextView 
@@ -29,7 +29,6 @@
 	     android:layout_marginLeft="20dip" 
     	 android:layout_marginRight="20dip" 
 	     android:text="@string/Argument1" 
-	     android:textAppearance="?android:attr/textAppearanceMedium"
 	     android:id="@+id/argument1_view">
      </TextView>
      
@@ -48,7 +47,6 @@
     	 android:layout_marginLeft="20dip" 
     	 android:layout_marginRight="20dip" 
 	     android:id="@+id/argument2_view" 
-	     android:textAppearance="?android:attr/textAppearanceMedium"
 	     android:text="@string/Argument2">
      </TextView>
      
@@ -67,7 +65,6 @@
     	 android:layout_marginRight="20dip" 
 	     android:layout_height="wrap_content" 
 	     android:layout_width="wrap_content" 
-	     android:textAppearance="?android:attr/textAppearanceMedium"
 	     android:text="@string/Argument3">
      </TextView>
      

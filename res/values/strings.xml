@@ -21,4 +21,11 @@
     <string name="CommandTitle">Command Option</string>
     <string name="command_ok">OK</string>
     <string name="command_cancle">Cancle</string>
+    <string-array name="command_type">
+        <item>command1</item>
+        <item>command2</item>
+        <item>command3</item>
+        <item>command4</item>
+    </string-array>
+    <string name="command_type_prompt">select one command type</string>
 </resources>
