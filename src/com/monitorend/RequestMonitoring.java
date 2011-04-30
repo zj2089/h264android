@@ -132,6 +132,8 @@ class RequestMonitoringThread extends ConnectCenterServerThread {
 				mAvailableCaptureEndList.add(strCapName);
 		}
 		
+		Log.d("Debug", "available cap num: " + mAvailableCaptureEndList.size());
+		
 		showResponse("Button", "update");
 		
 		getMonitorEndChoice();

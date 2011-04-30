@@ -13,12 +13,11 @@
 	  
 	    <TextView 
 	    	android:id="@+id/send_command_type_view"
-	    	android:text="@string/CommandType"
+	    	android:text="@string/command_type"
 	    	android:layout_marginLeft="20dip" 
 	    	android:layout_marginRight="20dip"     	
 	     	android:layout_width="match_parent" 
-	     	android:layout_height="wrap_content" 
-	     	android:gravity="left">
+	     	android:layout_height="wrap_content">
 	     </TextView>
 	      
 	     <Spinner 
@@ -35,7 +34,7 @@
 		     android:layout_height="wrap_content" 
 		     android:layout_marginLeft="20dip" 
 	    	 android:layout_marginRight="20dip" 
-		     android:text="@string/Argument1" 
+		     android:text="@string/argument1" 
 		     android:id="@+id/argument1_view">
 	     </TextView>
 	     
@@ -45,7 +44,7 @@
 		     android:layout_width="match_parent" 
 		     android:layout_height="wrap_content" 
 		     android:id="@+id/argument1_edit" 
-		     android:text="@string/Argument1_default">
+		     android:text="@string/argument1_default">
 	     </EditText>
 	     
 	     <TextView 
@@ -54,7 +53,7 @@
 	    	 android:layout_marginLeft="20dip" 
 	    	 android:layout_marginRight="20dip" 
 		     android:id="@+id/argument2_view" 
-		     android:text="@string/Argument2">
+		     android:text="@string/argument2">
 	     </TextView>
 	     
 	     <EditText 
@@ -63,7 +62,7 @@
 		     android:layout_width="match_parent" 
 		     android:layout_height="wrap_content" 
 		     android:id="@+id/argument2_edit" 
-		     android:text="@string/Argument2_default">
+		     android:text="@string/argument2_default">
 	     </EditText>
 	     
 	     <TextView 
@@ -72,7 +71,7 @@
 	    	 android:layout_marginRight="20dip" 
 		     android:layout_height="wrap_content" 
 		     android:layout_width="wrap_content" 
-		     android:text="@string/Argument3">
+		     android:text="@string/argument3">
 	     </TextView>
 	     
 	     <EditText 
@@ -81,7 +80,7 @@
 		     android:layout_marginLeft="20dip" 
 	    	 android:layout_marginRight="20dip" 
 		     android:id="@+id/argument3_edit" 
-		     android:text="@string/Argument3_default">
+		     android:text="@string/argument3_default">
 	     </EditText>
 	
 	</LinearLayout>

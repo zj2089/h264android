@@ -118,15 +118,15 @@ public class WVSS extends Activity {
 
 	// Menu item IDs
     public static final int SENDCOMMAND_ID = Menu.FIRST;    
-    public static final int EXIT_ID = Menu.FIRST + 1;
+    public static final int SWITH_TO_OTHER_ID = Menu.FIRST + 1;
 	private static final int SEND_COMMAND_DIALOG = 1;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         
-        menu.add(0, SENDCOMMAND_ID, 0, R.string.sendCommand);   
-        menu.add(0, EXIT_ID, 1, R.string.exit);
+        menu.add(0, SENDCOMMAND_ID, 0, R.string.send_command);   
+        menu.add(0, SWITH_TO_OTHER_ID, 1, R.string.switch_to_other);
 
         return true;
     }
@@ -149,7 +149,7 @@ public class WVSS extends Activity {
     	final View commandDialogView = factory.inflate(R.layout.send_command, null);
     	
     	builder.setIcon(R.drawable.icon);
-    	builder.setTitle(R.string.CommandTitle);
+    	builder.setTitle(R.string.command_title);
     	builder.setView(commandDialogView);
     	
     	final EditText argument1 = (EditText) commandDialogView.findViewById(R.id.argument1_edit);
@@ -181,7 +181,7 @@ public class WVSS extends Activity {
 			}
 		});
     	
-    	builder.setNegativeButton(R.string.command_cancle, new DialogInterface.OnClickListener() {
+    	builder.setNegativeButton(R.string.command_cancel, new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -289,7 +289,7 @@ public class WVSS extends Activity {
 	        	
 	            return true;
 	        }
-	        case EXIT_ID:
+	        case SWITH_TO_OTHER_ID:
 	        {
 	        	finish();
 	            return true;

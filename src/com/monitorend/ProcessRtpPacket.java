@@ -287,6 +287,6 @@ class ProcessRtpPacketThread extends Thread {
 	
 	public void setFinished() {
 		mIsFinished = true;
-		mDatagramPacketQueue.notifyAll();
+		mDatagramPacketQueue.setFinished();
 	}
 }

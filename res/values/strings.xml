@@ -4,33 +4,32 @@
     <string name="app_name">WVSS</string>
     
     <string name="connect_server">连接监控服务器</string>   
-    <string name="exit">退出</string>   
-    <string name="InputIpAddress">请输入监控服务器IP地址</string>   
+    <string name="switch_to_other">切换</string>   
+    <string name="input_ip_address">请输入监控服务器IP地址</string>   
     <string name="cur_state"></string>   
     <string name="default_ip_addr">10.0.2.2</string>
     <string name="context_menu_header">选择采集终端</string>
-    <string name="sendCommand">Send Command</string>
-    <string name="CommandType">Command Type:</string>
-    <string name="Argument1">Argument1</string>
-    <string name="Argument2">Argument2</string>
-    <string name="Argument3">Argument3</string>
-    <string name="Argument1_default">0</string>
-    <string name="Argument2_default">0</string>
-    <string name="Argument3_default">0</string>
-    <string name="CommandTitle">Command Option</string>
-    <string name="command_ok">OK</string>
-    <string name="command_cancle">Cancle</string>
+    <string name="send_command">远程控制</string>
+    <string name="command_type">控制类型</string>
+    <string name="argument1">参数1</string>
+    <string name="argument2">参数2</string>
+    <string name="argument3">参数3</string>
+    <string name="argument1_default">0</string>
+    <string name="argument2_default">0</string>
+    <string name="argument3_default">0</string>
+    <string name="command_title">控制选项</string>
+    <string name="command_ok">确定</string>
+    <string name="command_cancel">取消</string>
     <string-array name="command_type">
-        <item>command1</item>
-        <item>command2</item>
-        <item>command3</item>
-        <item>command4</item>
+        <item>控制1</item>
+        <item>控制2</item>
+        <item>控制3</item>
+        <item>控制4</item>
     </string-array>
-    <string name="command_type_prompt">select one command type</string>
-    <string name="select_capture_end">Select one capture end</string>
-    <string name="no_available_capture_end_msg">No capture end is available now. Please try again later!</string>
-    <string name="no_available_capture_end_title">Sorry</string>
-    <string-array name="available_capture_end"></string-array>
-    <string name="OK">OK</string>
-    <string name="CANCLE">Cancle</string>
+    <string name="command_type_prompt">选择控制类型</string>
+    <string name="select_capture_end">选择采集终端</string>
+    <string name="no_available_capture_end_msg">很抱歉！当前没有可用的采集终端，请稍后再试！</string>
+    <string name="no_available_capture_end_title">抱歉</string>
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
 </resources>

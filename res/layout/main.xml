@@ -7,9 +7,8 @@
     
     <TextView 
 	    android:layout_height="wrap_content" 
-	    android:text="@string/InputIpAddress" 
-	    android:layout_width="wrap_content" 
-	    android:id="@+id/textView1">
+	    android:text="@string/input_ip_address" 
+	    android:layout_width="wrap_content" android:id="@+id/input_ip_view">
     </TextView>
     
     <EditText 
@@ -20,20 +19,17 @@
 	    android:layout_marginTop = "10dp"
 	    android:layout_marginBottom = "10dp"
 	    android:layout_gravity="center" 
-	    android:text="@string/default_ip_addr" 
-	    android:id="@+id/editText1">
+	    android:text="@string/default_ip_addr" android:id="@+id/center_server_ip_edit">
     </EditText>
     
     <Button 
 	    android:layout_height="wrap_content" 
 	    android:text="@string/connect_server" 
 	    android:layout_width="wrap_content" 
-	    android:id="@+id/button1" 
-	    android:layout_gravity="center">
+	    android:layout_gravity="center" android:id="@+id/connect_button">
     </Button>
     
     <TextView 
-	    android:id="@+id/textView2" 
 	    android:layout_gravity="center" 
 	    android:background="#ffffff"
 	    android:text="@string/cur_state" 
@@ -42,7 +38,7 @@
 	    android:layout_marginTop = "10dp"
 	    android:layout_marginBottom = "10dp"
 	    android:layout_width="match_parent" 
-	    android:layout_height="match_parent">
+	    android:layout_height="match_parent" android:id="@+id/msg_log_view">
     </TextView>
     
 </LinearLayout>

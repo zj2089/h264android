@@ -79,4 +79,8 @@ class DatagramPacketQueue {
 		
 		return p.getDatagramPacket();		
 	}
+	
+	public synchronized void setFinished() {
+		mIsFinished = true;
+	}
 }

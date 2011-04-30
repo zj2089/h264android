@@ -26,9 +26,9 @@ public class MainAct extends Activity {
 
 	protected static final int AVAILABLE_CAPTURE_END = 0;
 	public static final int REQ_CODE_FINISHED = 2011;
-	private EditText mEditText = null;
-	private Button mButton = null;
-	private TextView mTextView2 = null;
+	private EditText mCenterServerIpEdit = null;
+	private Button mConnectButton = null;
+	private TextView mMsgLogView = null;
 	private List<String> mAvailableCaptureEndList;
 	private RequestMonitoringThread mRequestMonitoringThread;
 	private Handler mHandler;
@@ -43,14 +43,14 @@ public class MainAct extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		mButton = (Button) findViewById(R.id.button1);
-		mTextView2 = (TextView) findViewById(R.id.textView2);
-		mEditText = (EditText) findViewById(R.id.editText1);
+		mConnectButton = (Button) findViewById(R.id.connect_button);
+		mMsgLogView = (TextView) findViewById(R.id.msg_log_view);
+		mCenterServerIpEdit = (EditText) findViewById(R.id.center_server_ip_edit);
 		mAvailableCaptureEndList = new ArrayList<String>();
 		mIntent = new Intent(this, WVSS.class);
 
-		mButton.setOnClickListener(new ButtonClickListener(this));
-		mButton.setOnCreateContextMenuListener( new ButtonContextMenuListener());
+		mConnectButton.setOnClickListener(new ButtonClickListener(this));
+		mConnectButton.setOnCreateContextMenuListener( new ButtonContextMenuListener());
 
 		mHandler = new Handler() {
 
@@ -66,7 +66,7 @@ public class MainAct extends Activity {
 				Log.d("MSG", "receive msg");
 				
 				if(senderStr.equals("mTextView2")) {
-					mTextView2.append(msgStr + "\n");
+					mMsgLogView.append(msgStr + "\n");
 				}
 				else {
 //					mButton.showContextMenu();
@@ -92,7 +92,7 @@ public class MainAct extends Activity {
 		 */
 		if( REQ_CODE_FINISHED == requestCode ) {
 			
-			String centerServerIp = mEditText.getText().toString();
+			String centerServerIp = mCenterServerIpEdit.getText().toString();
 			
 			/*
 			 * quit monitoring the current capture end
@@ -128,34 +128,39 @@ public class MainAct extends Activity {
 		switch(id) 
 		{
 		case AVAILABLE_CAPTURE_END:
-			return initCaptureEndDialog(mAvailableCaptureEndList);
+			return (initCaptureEndDialog());
+		default:
+			Log.d("Debug", "new switch?");
+			return null;
 		}
-		return super.onCreateDialog(id);
+		
 	}
 	
-	private Dialog initCaptureEndDialog(final List<String> capList) {
+	private Dialog initCaptureEndDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(MainAct.this);
 		
-		if( 0 == capList.size()) {
+		builder.setIcon(R.drawable.alert_dialog_icon);
+		if( 0 == mAvailableCaptureEndList.size()) {
 			builder.setTitle(R.string.no_available_capture_end_title);
 			builder.setMessage(R.string.no_available_capture_end_msg);
 		}
 		else {
+			
+			// set the default selection
+			MainAct.this.mSelectCaptureEndName = mAvailableCaptureEndList.get(0);
+			
 			builder.setTitle(R.string.select_capture_end);
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-					MainAct.this, 
-					R.array.available_capture_end, 
-					capList);
-			builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+			String[] strCapList = mAvailableCaptureEndList.toArray(new String[0]);
+			builder.setSingleChoiceItems(strCapList, 0, new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					
-					MainAct.this.mSelectCaptureEndName = capList.get(which);
+					MainAct.this.mSelectCaptureEndName = mAvailableCaptureEndList.get(which);
 				}
 			});
 			
-			builder.setPositiveButton(R.string.OK, new DialogInterface.OnClickListener() {
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -165,7 +170,7 @@ public class MainAct extends Activity {
 				}
 			});
 			
-			builder.setNegativeButton(R.string.CANCLE, new DialogInterface.OnClickListener() {
+			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -196,7 +201,7 @@ public class MainAct extends Activity {
 			/*
 			 *  set the global variable : CenterServerIp
 			 */
-			((MyApp)getApplicationContext()).setCenterServerIp(mEditText.getText().toString());
+			((MyApp)getApplicationContext()).setCenterServerIp(mCenterServerIpEdit.getText().toString());
 			
 			mAvailableCaptureEndList.clear();
 			
@@ -206,7 +211,7 @@ public class MainAct extends Activity {
 			mRequestMonitoringThread = new RequestMonitoringThread(
 					mAvailableCaptureEndList, 
 					mActivity,
-					mEditText.getText().toString(),
+					mCenterServerIpEdit.getText().toString(),
 					mHandler,
 					mIntent);
 			mRequestMonitoringThread.start();
