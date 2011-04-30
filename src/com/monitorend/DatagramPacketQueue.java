@@ -37,10 +37,12 @@ class DatagramPackeCell {
 class DatagramPacketQueue {
 	
 	private DatagramPackeCell head, tail;
+	private boolean mIsFinished;
 	
 	public DatagramPacketQueue() {
 		head = null;
 		tail = null;
+		mIsFinished = false;
 	}
 	
 	public synchronized void add(DatagramPacket datagramPacket) {
@@ -60,7 +62,7 @@ class DatagramPacketQueue {
 	
 	public synchronized DatagramPacket take(){
 		
-		while( head == null ) {
+		while( head == null && !mIsFinished) {
 			try {
 				wait();
 			} catch (InterruptedException e) {

@@ -2,6 +2,7 @@ package com.monitorend;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
 
 import android.util.Log;
 
@@ -13,27 +14,33 @@ class RecvSpsPpsThread extends Thread {
 	public int mRecvPacketNum = 0;
 	
 	private ReceiveNaluThread mReceiveNaluThread;
-	private InputStream mInputStream;
+	private Socket mSocket;
 
-	private boolean mIsFinish = false;
+	private boolean mIsFinished;
 
-	public RecvSpsPpsThread(WVSSView view, ReceiveNaluThread rtpClientThread, InputStream inputStream) {
+	public RecvSpsPpsThread(WVSSView view, ReceiveNaluThread rtpClientThread, Socket socket) {
 
 		mView = view;
 		mReceiveNaluThread = rtpClientThread;
-		mInputStream = inputStream;
+		mSocket = socket;
+		mIsFinished = false;
 	}
 
 	@Override
 	public void run() {
 
-		while(!mIsFinish) {
+		while(!mIsFinished) {
 
 			try {
+				InputStream inputStream = mSocket.getInputStream();
+				
 				byte spsPpsBuf[] = new byte[ClientConfig.SPS_PPS_BUFFER_SIZE];
-				int spsPpsLen = mInputStream.read();
+				int spsPpsLen = inputStream.read();
+				
+				if( spsPpsLen < 0 )
+					break;
 
-				mInputStream.read(spsPpsBuf, 0, spsPpsLen);
+				inputStream.read(spsPpsBuf, 0, spsPpsLen);
 				
 				mRecvPacketNum++;
 
@@ -59,10 +66,24 @@ class RecvSpsPpsThread extends Thread {
 				Log.d("nullpoint", "inputstream is null");
 			}
 		}
+		
+		try {
+			mSocket.close();
+		} catch (IOException e) {
+			Log.d("Debug", "IOException in ReceiveSpsPps");
+			e.printStackTrace();
+		}
 	}
 	
-	public void setIsFinish(boolean isFinish) {
-		this.mIsFinish = isFinish;
+	public void setFinished() {
+		mIsFinished = true;
+		try {
+			if( null != mSocket )
+				mSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

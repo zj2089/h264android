@@ -30,13 +30,20 @@ import android.widget.AdapterView.OnItemSelectedListener;
 public class WVSS extends Activity {
 
 	private WVSSView mWvssView;
-	private ReceiveNaluThread mReceiveNaluThread;
+
 //	private MulticastLock mMulticastLock;
 	private DatagramPacketQueue mDatagramPacketQueue;
 	private Dialog mCommandDialog;
 	private String mCommandType;
 	private String mCenterServerIp;
 	private String mCurCaptureEnd;
+	
+	/*
+	 *  the threads created by this activity
+	 */
+	private ReceiveNaluThread mReceiveNaluThread;
+	private RecvSpsPpsThread mRecvSpsPpsThread; 
+	private ProcessRtpPacketThread mProcessRtpPacketThread; 
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,31 +68,53 @@ public class WVSS extends Activity {
         
         // get the global Current Capture End Name
         mCurCaptureEnd = myApp.getCurCaputureEnd();
-        
-        InputStream inputStream = null;
-        try {
-        	inputStream = socket.getInputStream();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		mDatagramPacketQueue = new DatagramPacketQueue();
 		
         mReceiveNaluThread = new ReceiveNaluThread(/*multicastAddress, */mDatagramPacketQueue);
-		new RecvSpsPpsThread(mWvssView, mReceiveNaluThread, inputStream).start();
+        mRecvSpsPpsThread = new RecvSpsPpsThread(mWvssView, mReceiveNaluThread, socket);
+        mRecvSpsPpsThread.start();
 		
-		new ProcessRtpPacketThread(mWvssView, mDatagramPacketQueue).start();
+        mProcessRtpPacketThread = new ProcessRtpPacketThread(mWvssView, mDatagramPacketQueue);
+        mProcessRtpPacketThread.start();
     }
     
     @Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
+		
 		super.onStop();
+		
+		/**
+		 * force finishing the following threads
+		 */
+		mReceiveNaluThread.setFinished();
+		mRecvSpsPpsThread.setFinished();
+		mProcessRtpPacketThread.setFinished();
+		
+		try {
+			mReceiveNaluThread.join();
+			mRecvSpsPpsThread.join();
+			mProcessRtpPacketThread.join();
+		} catch (InterruptedException e) {
+			
+			e.printStackTrace();
+		}
 		
 		Log.i("STOP", "WVSS activity stopping");
 		
 //		mMulticastLock.release();
 	}
+    
+
+	@Override
+	protected void onDestroy() {
+		
+		Intent intent = new Intent();
+		this.setResult(MainAct.REQ_CODE_FINISHED, intent);
+		
+		super.onDestroy();
+	}
+
 
 	// Menu item IDs
     public static final int SENDCOMMAND_ID = Menu.FIRST;    
@@ -173,7 +202,7 @@ public class WVSS extends Activity {
     	ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
     			WVSS.this, 
     			R.array.command_type, 
-    			android.R.layout.simple_spinner_dropdown_item);
+    			android.R.layout.simple_dropdown_item_1line);
     	
         /*
          * Attach the mLocalAdapter to the spinner.
@@ -192,9 +221,6 @@ public class WVSS extends Activity {
          */
 
         spinner.setOnItemSelectedListener(spinnerListener);
-    	
-
-
     	
     	mCommandDialog = builder.create();
     	

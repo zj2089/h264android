@@ -10,6 +10,7 @@ import android.util.Log;
 
 class ProcessRtpPacketThread extends Thread {
 
+	private boolean mIsFinished;
 	WVSSView mView;
 
 	// the RTP buffer
@@ -251,14 +252,19 @@ class ProcessRtpPacketThread extends Thread {
 		mView = view;
 		mDatagramPacketQueue = datagramPacketQueue;
 		
+		mIsFinished = false;
+		
 		AllocRtpBuffer();
 	}
 	
 	@Override
 	public void run() {
 		
-		while(true) {
+		while(!mIsFinished) {
 			DatagramPacket rtpDatagram = mDatagramPacketQueue.take();
+			
+			if( null == rtpDatagram )
+				break;
 			
 			int rtpPacketLen = rtpDatagram.getLength();
 			byte[] rtpPacket = rtpDatagram.getData();
@@ -277,5 +283,10 @@ class ProcessRtpPacketThread extends Thread {
 				}
 			}
 		}
+	}
+	
+	public void setFinished() {
+		mIsFinished = true;
+		mDatagramPacketQueue.notifyAll();
 	}
 }

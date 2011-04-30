@@ -10,6 +10,8 @@ import java.net.SocketException;
 import android.util.Log;
 
 class ReceiveNaluThread extends Thread {
+	
+	private boolean mIsFinished;
 
 //	private MulticastSocket mClientDatagram = null;
 	private DatagramSocket mClientDatagram = null;
@@ -21,6 +23,7 @@ class ReceiveNaluThread extends Thread {
 	public ReceiveNaluThread(/*String multicastAddr, */DatagramPacketQueue datagramPacketQueue) {
 
 		mDatagramPacketQueue = datagramPacketQueue;
+		mIsFinished = false;
 		
 //		/**
 //		 * use multicast to receive data
@@ -53,7 +56,7 @@ class ReceiveNaluThread extends Thread {
 	@Override
 	public void run() {
 
-		while (true) {
+		while (!mIsFinished) {
 
 			// to receive the RTP packet
 			byte[] rtpPacket = new byte[ClientConfig.RTP_PACKET_MAX_SIZE];
@@ -74,5 +77,13 @@ class ReceiveNaluThread extends Thread {
 
 		}
 
+	}
+	
+	// force finishing the thread
+	public void setFinished() {
+		mIsFinished = true;
+		if( null != mClientDatagram ) {
+			mClientDatagram.close();
+		}
 	}
 }
