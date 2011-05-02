@@ -70,6 +70,7 @@ public class MainAct extends Activity {
 				}
 				else {
 //					mButton.showContextMenu();
+					Log.d("PRO", "update cap num: "+mAvailableCaptureEndList.size());
 					showDialog(AVAILABLE_CAPTURE_END);
 				}
 			}
@@ -128,6 +129,7 @@ public class MainAct extends Activity {
 		switch(id) 
 		{
 		case AVAILABLE_CAPTURE_END:
+			Log.d("PRO", " create dialog ");
 			return (initCaptureEndDialog());
 		default:
 			Log.d("Debug", "new switch?");
@@ -143,6 +145,18 @@ public class MainAct extends Activity {
 		if( 0 == mAvailableCaptureEndList.size()) {
 			builder.setTitle(R.string.no_available_capture_end_title);
 			builder.setMessage(R.string.no_available_capture_end_msg);
+			builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+					/*
+					 *  remove the exist dialog, to ensure calling initDialog() to update 
+					 *  single choice items when showDialog()  
+					 */
+					removeDialog(AVAILABLE_CAPTURE_END);
+				}
+			});
 		}
 		else {
 			
@@ -167,6 +181,12 @@ public class MainAct extends Activity {
 					
 					mRequestMonitoringThread.setMonitorEndChoice(mSelectCaptureEndName);
 					((MyApp)getApplicationContext()).setCurCaptureEnd(mSelectCaptureEndName);
+					
+					/*
+					 *  remove the exist dialog, to ensure calling initDialog() to update 
+					 *  single choice items when showDialog()  
+					 */
+					removeDialog(AVAILABLE_CAPTURE_END);
 				}
 			});
 			
@@ -178,6 +198,12 @@ public class MainAct extends Activity {
 					mSelectCaptureEndName = null;
 					mRequestMonitoringThread.setMonitorEndChoice(mSelectCaptureEndName);
 					((MyApp)getApplicationContext()).setCurCaptureEnd(mSelectCaptureEndName);
+					
+					/*
+					 *  remove the exist dialog, to ensure calling initDialog() to update 
+					 *  single choice items when showDialog()  
+					 */
+					removeDialog(AVAILABLE_CAPTURE_END);
 				}
 			});
 		}
@@ -197,6 +223,12 @@ public class MainAct extends Activity {
 
 		@Override
 		public void onClick(View v) {
+			
+			/*
+			 *  remove the exist dialog, to ensure calling initDialog() to update 
+			 *  single choice items when showDialog()  
+			 */
+			removeDialog(AVAILABLE_CAPTURE_END);
 			
 			/*
 			 *  set the global variable : CenterServerIp
