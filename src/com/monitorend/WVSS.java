@@ -148,7 +148,7 @@ public class WVSS extends Activity {
     	LayoutInflater factory = LayoutInflater.from(this);
     	final View commandDialogView = factory.inflate(R.layout.send_command, null);
     	
-    	builder.setIcon(R.drawable.icon);
+    	builder.setIcon(R.drawable.alert_dialog_icon);
     	builder.setTitle(R.string.command_title);
     	builder.setView(commandDialogView);
     	
@@ -168,6 +168,7 @@ public class WVSS extends Activity {
 					Log.d("Debug", "UnknownHostException in WVSS");
 					e.printStackTrace();
 				}
+				//localIpAddr = "192.168.1.102";
 				SendCommandThread sendCommandThread = new SendCommandThread(
 						mCenterServerIp,
 						localIpAddr,

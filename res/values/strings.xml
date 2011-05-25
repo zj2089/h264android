@@ -21,7 +21,7 @@
     <string name="command_ok">确定</string>
     <string name="command_cancel">取消</string>
     <string-array name="command_type">
-        <item>comand1</item>
+        <item>command1</item>
         <item>command2</item>
         <item>command3</item>
         <item>command4</item>
