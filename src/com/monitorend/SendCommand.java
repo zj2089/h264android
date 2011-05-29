@@ -59,7 +59,7 @@ class SendCommandThread extends Thread {
 			outputStream.write(sender);
 			
 			// send receiver
-			byte[] receiver = mReceiver.getBytes("ISO-8859-1");
+			byte[] receiver = mReceiver.getBytes("UTF-16LE");
 			outputStream.write(receiver.length);
 			outputStream.write(receiver);
 			

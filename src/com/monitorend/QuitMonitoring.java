@@ -44,7 +44,7 @@ class QuitMonitoringThread extends ConnectCenterServerThread {
 		
 		byte[] curCaptureEnd = null;
 		try {
-			curCaptureEnd = mCurCaptureEnd.getBytes("ISO-8859-1");
+			curCaptureEnd = mCurCaptureEnd.getBytes("UTF-16LE");
 		} catch (UnsupportedEncodingException e1) {
 			Log.d("Debug", "UnsupportedEncodingException in QuitMonitoring");
 			e1.printStackTrace();

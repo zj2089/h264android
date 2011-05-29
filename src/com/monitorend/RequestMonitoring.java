@@ -123,7 +123,7 @@ class RequestMonitoringThread extends ConnectCenterServerThread {
 			inputStream.read(captureEndName, 0, captureEndNameLen);
 			String strCapName = null;
 			try {
-				strCapName = new String(captureEndName, "ISO-8859-1");
+				strCapName = new String(captureEndName, "UTF-16LE");
 			} catch (UnsupportedEncodingException e) {
 				Log.d("Debug", "UnsupportedEncodingException in RequestMonitoring");
 				e.printStackTrace();
@@ -152,7 +152,7 @@ class RequestMonitoringThread extends ConnectCenterServerThread {
 		 * send the choice of monitor end
 		 */
 		try {
-			byte[] monitorEndChoice = mMonitorEndChoice.getBytes("ISO-8859-1");
+			byte[] monitorEndChoice = mMonitorEndChoice.getBytes("UTF-16LE");
 			mOutputStream.write(monitorEndChoice.length);
 			mOutputStream.write(monitorEndChoice);
 		} catch (IOException e) {
