@@ -9,7 +9,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 
-class CWifiSupport {
+class WifiSupport {
 
 	private WifiManager mWifiManager;
 
@@ -21,7 +21,7 @@ class CWifiSupport {
 
 	WifiLock mWifiLock;
 
-	public CWifiSupport(Context context) {
+	public WifiSupport(Context context) {
 
 		mWifiManager = (WifiManager) context
 				.getSystemService(Context.WIFI_SERVICE);
@@ -102,8 +102,15 @@ class CWifiSupport {
 		return (mWifiInfo == null) ? "NULL" : mWifiInfo.getBSSID();
 	}
 
-	public int getIPAddress() {
-		return (mWifiInfo == null) ? 0 : mWifiInfo.getIpAddress();
+	public String getIPAddress() {
+		String ipAddr;
+		int ip = (mWifiInfo == null) ? 0 : mWifiInfo.getIpAddress();
+		int ip4 = ( (ip & 0xff000000) >> 24 );
+		int ip3 = ( (ip & 0x00ff0000) >> 16 );
+		int ip2 = ( (ip & 0x0000ff00) >> 8 );
+		int ip1 = (ip & 0x000000ff);
+		ipAddr = String.format("%d.%d.%d.%d", ip1, ip2, ip3, ip4<0?256+ip4:ip4);
+		return ipAddr;
 	}
 
 	public int getNetworkId() {

@@ -45,6 +45,8 @@ public class WVSS extends Activity {
 	private RecvSpsPpsThread mRecvSpsPpsThread; 
 	private ProcessRtpPacketThread mProcessRtpPacketThread; 
 	
+	private WifiSupport mWifiSupport;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +61,8 @@ public class WVSS extends Activity {
         
 //        Intent intent = this.getIntent();
 //        String multicastAddress = intent.getStringExtra("multicastAddress");
+        
+        mWifiSupport = new WifiSupport(getApplicationContext());
         
         MyApp myApp = (MyApp) getApplicationContext();
         Socket socket = myApp.getSocket();
@@ -161,17 +165,11 @@ public class WVSS extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				
-				String localIpAddr = null;
-				try {
-					localIpAddr = InetAddress.getLocalHost().getHostAddress();
-				} catch (UnknownHostException e) {
-					Log.d("Debug", "UnknownHostException in WVSS");
-					e.printStackTrace();
-				}
-				//localIpAddr = "192.168.1.102";
+				String ipAddr = mWifiSupport.getIPAddress();
+
 				SendCommandThread sendCommandThread = new SendCommandThread(
 						mCenterServerIp,
-						localIpAddr,
+						ipAddr,
 						mCurCaptureEnd,
 						mCommandType,
 						argument1.getText().toString(),
