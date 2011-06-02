@@ -12,9 +12,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.MulticastLock;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -50,7 +52,26 @@ public class WVSS extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mWvssView = new WVSSView(this, 320, 240);
+        
+        DisplayMetrics metrics = new DisplayMetrics(); 
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        
+        if(metrics.widthPixels > metrics.heightPixels)
+        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        else
+        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        
+        int width = metrics.widthPixels > metrics.heightPixels 
+        					? metrics.widthPixels:metrics.heightPixels;
+        int height = metrics.widthPixels < metrics.heightPixels 
+							? metrics.widthPixels:metrics.heightPixels;
+
+        Log.d("new", ""+width);
+        Log.d("new", ""+height);
+       
+        
+        mWvssView = new WVSSView(this, width, height);
         setContentView(mWvssView);
         
 //        // allow this application to receive multicast packets

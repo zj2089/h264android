@@ -36,4 +36,14 @@ public interface ClientConfig {
 	 * the port monitor end sends command to
 	 */
 	static final int PORT_MONITOR_END_SEND_COMMAND_TO = 11000;
+	
+	/**
+	 * the width of received video
+	 */
+	static final int VIDEO_WIDTH = 320;
+	
+	/**
+	 * the height of received video
+	 */
+	static final int VIDEO_HEIGHT = 240;
 }

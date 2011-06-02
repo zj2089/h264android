@@ -8,6 +8,8 @@
 		
 int iWidth=0;
 int iHeight=0;
+int oldWidth=0;
+int oldHeight=0;
 	
 int *colortab=NULL;
 int *u_b_tab=NULL;
@@ -20,6 +22,7 @@ unsigned int *r_2_pix=NULL;
 unsigned int *g_2_pix=NULL;
 unsigned int *b_2_pix=NULL;
 unsigned char *outBuf=NULL;
+unsigned int* orgPixel = NULL;
 		
 void DeleteYUVTab()
 {	
@@ -33,6 +36,39 @@ void DeleteYUVTab()
 		free(rgb_2_pix);
 	}
 	
+}
+
+void ConvertPic(const unsigned char* srcBuf, unsigned char* dstBuf,
+				const int srcWidth, const int srcHeight,
+				const int dstWidth, const int dstHeight)
+{
+	// the width scale
+	double fx = dstWidth*1.0/srcWidth;
+
+	// the height scale
+	double fy = dstHeight*1.0/srcHeight;
+
+	/*
+	 * scanning the destination picture from bottom to top,
+	 * from left to right
+	 */
+	for (int dstRow=dstHeight-1; dstRow>=0; dstRow--)
+	{
+		for(int dstCol=0; dstCol<dstWidth; dstCol++)
+		{
+			/*
+			 * scanning to (dstCol, dstRow),(column, row)
+			 */
+
+			// the corresponding source row
+			int cor_SrcRow = (int)(dstRow/fy+0.5);
+
+			// the corresponding source column
+			int cor_SrcCol = (int)(dstCol/fx+0.5);
+			*(dstBuf++) = *(srcBuf + ((srcHeight-1-cor_SrcRow)*srcWidth+cor_SrcCol)*2);
+			*(dstBuf++) = *(srcBuf + ((srcHeight-1-cor_SrcRow)*srcWidth+cor_SrcCol)*2 + 1);
+		}
+	}
 }
 
 void CreateYUVTab_16()
@@ -180,11 +216,14 @@ JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_InitDecoder
 		return 0;
 	}
 	
+	oldWidth = width;
+	oldHeight = height;
 	iWidth = width;
 	iHeight = height;
 	CreateYUVTab_16();
 	
 	outBuf = (unsigned char*)malloc(((iWidth*iHeight*3)>>1));
+	orgPixel = (unsigned int*)malloc(((oldWidth*oldHeight)<<1));
 	
 	return 1;
 }
@@ -210,6 +249,11 @@ JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_UninitDecoder
 		free(outBuf);
 	}
 	
+	if(orgPixel)
+	{
+		free(orgPixel);
+	}
+	
 	return 1;
 }
 
@@ -218,8 +262,15 @@ JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_UninitDecoder
  * Method:    DecodeNal
  * Signature: ([BI[B)I
  */
-JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_DecodeNal
-  (JNIEnv *env, jobject thiz, jbyteArray in, jint nalLen, jbyteArray out)
+JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_DecodeNal(
+  JNIEnv *env, 
+  jobject thiz, 
+  jbyteArray in, 
+  jint nalLen, 
+  jbyteArray out,
+  jint canvasWidth,
+  jint canvasHeight
+  )
 {
 	jbyte* nalBuf = (jbyte*)(env)->GetByteArrayElements(in, 0);
 	jbyte* Pixel= (jbyte*)(env)->GetByteArrayElements(out, 0);
@@ -244,7 +295,7 @@ JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_DecodeNal
 	if(outLen > 0)
 	{
 		DisplayYUV_16(
-		(unsigned int*)Pixel, 
+		orgPixel, 
 		outBuf, 
 		outBuf+iWidth*iHeight, 
 		outBuf+iWidth*iHeight+((iWidth*iHeight)>>2), 
@@ -253,7 +304,17 @@ JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_DecodeNal
 		iWidth, 
 		iWidth/2, 
 		iWidth
-		);	
+		);
+		
+		if(canvasWidth!=oldWidth || canvasHeight!=oldHeight)
+		{
+			ConvertPic((unsigned char*)orgPixel, (unsigned char*)Pixel,
+					 oldWidth, oldHeight, canvasWidth, canvasHeight);
+		}
+		else
+		{
+			memcpy(Pixel, orgPixel, (canvasWidth*canvasHeight)<<1);
+		}
 	}
 	
     (env)->ReleaseByteArrayElements(in, nalBuf, 0);    

@@ -13,32 +13,38 @@ class WVSSView extends View {
 	
     private byte [] mPixel;    
     private ByteBuffer mBuffer;
-	private Bitmap mVideoBit;           
+	private Bitmap mVideoBit;
+	private int mCanvasWidth;
+	private int mCanvasHeight;
    
     public native int InitDecoder(int width, int height);
     public native int UninitDecoder(); 
-    public native int DecodeNal(byte[] in, int insize, byte[] out);
+    public native int DecodeNal(byte[] in, int insize, byte[] out, int canvasWidth,
+    		int canvasHeight);
     
     static {
         System.loadLibrary("H264Decoder");
     }
        
-    public WVSSView(Context context, int width, int height) {
+    public WVSSView(Context context, int canvasWidth, int canvasHeight) {
         super(context);
         setFocusable(true);
         
-        mPixel = new byte[width*height*2];      
+        mCanvasWidth = canvasWidth;
+        mCanvasHeight = canvasHeight;
+        
+        mPixel = new byte[canvasWidth*canvasHeight*2];      
         Arrays.fill(mPixel, (byte) 0);
 
         mBuffer = ByteBuffer.wrap( mPixel );
-        mVideoBit = Bitmap.createBitmap(width, height, Config.RGB_565); 
+        mVideoBit = Bitmap.createBitmap(canvasWidth, canvasHeight, Config.RGB_565); 
         
-        InitDecoder(width, height);
+        InitDecoder(ClientConfig.VIDEO_WIDTH, ClientConfig.VIDEO_HEIGHT);
     }
     
     // decode the NALU and display the picture
     public void decodeNalAndDisplay(byte[] nalBuf, int nalLen) {
-    	int iTmp = DecodeNal(nalBuf, nalLen, mPixel);
+    	int iTmp = DecodeNal(nalBuf, nalLen, mPixel, mCanvasWidth, mCanvasHeight);
     	if( iTmp > 0 ) {
     		postInvalidate();
     	}

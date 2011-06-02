@@ -8,14 +8,21 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"></uses-permission>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"></uses-permission>
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:name="MyApp">
-        <activity android:name="com.monitorend.MainAct" android:label="@string/app_name">
+        <activity 
+        	android:name="com.monitorend.MainAct" 
+        	android:label="@string/app_name"
+        	android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.monitorend.WVSS"></activity>
+        <activity android:name="com.monitorend.WVSS"
+        			android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        			android:configChanges="orientation">
+        </activity>
     </application>
     
     <!-- the minSdkVersion when installed to device -->

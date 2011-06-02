@@ -8,9 +8,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -41,7 +43,17 @@ public class MainAct extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.main);
+		
+        DisplayMetrics metrics = new DisplayMetrics(); 
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        
+    
+        if(metrics.widthPixels > metrics.heightPixels)
+        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
 		mConnectButton = (Button) findViewById(R.id.connect_button);
 		mMsgLogView = (TextView) findViewById(R.id.msg_log_view);

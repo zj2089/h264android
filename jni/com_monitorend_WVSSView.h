@@ -26,10 +26,10 @@ JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_UninitDecoder
 /*
  * Class:     com_monitorend_WVSSView
  * Method:    DecodeNal
- * Signature: ([BI[B)I
+ * Signature: ([BI[BII)I
  */
 JNIEXPORT jint JNICALL Java_com_monitorend_WVSSView_DecodeNal
-  (JNIEnv *, jobject, jbyteArray, jint, jbyteArray);
+  (JNIEnv *, jobject, jbyteArray, jint, jbyteArray, jint, jint);
 
 #ifdef __cplusplus
 }
