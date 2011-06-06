@@ -56,10 +56,10 @@ public class WVSS extends Activity {
         DisplayMetrics metrics = new DisplayMetrics(); 
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         
-        if(metrics.widthPixels > metrics.heightPixels)
+        //if(metrics.widthPixels > metrics.heightPixels)
         	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        else
-        	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+       // else
+        //	setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         
         int width = metrics.widthPixels > metrics.heightPixels 
